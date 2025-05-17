@@ -141,12 +141,13 @@ def main():
     SHEET_NAME = "案件登録"
 
     df = get_project_list(SPREADSHEET_KEY, SHEET_NAME)
-    
-styled_df = df.style.set_table_styles([
+
+    styled_df = df.style.set_table_styles([
     {'selector': 'table', 'props': [('background-color', 'white'), ('color', 'black'), ('border', '1px solid black')]},
     {'selector': 'th', 'props': [('background-color', 'white'), ('color', 'black'), ('border', '1px solid black')]},
     {'selector': 'td', 'props': [('background-color', 'white'), ('color', 'black'), ('border', '1px solid black')]}
 ])
+
 
     # ページネーション設定
     items_per_page = 60
@@ -170,7 +171,7 @@ styled_df = df.style.set_table_styles([
 
     start_idx = (st.session_state.current_page - 1) * items_per_page
     end_idx = min(start_idx + items_per_page, total_items)
-    current_df = df.iloc[start_idx:end_idx]
+    current_df = styled_df.iloc[start_idx:end_idx]
 
     # 表ヘッダー
     cols = st.columns(len(df.columns) + 1)
