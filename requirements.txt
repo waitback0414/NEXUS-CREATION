@@ -1,0 +1,6 @@
+streamlit
+pymupdf
+pandas
+gspread
+google-auth
+google-cloud-vision
