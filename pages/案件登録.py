@@ -81,18 +81,16 @@ with st.form("案件登録フォーム"):
         client = get_gspread_client()
         sheet = client.open_by_key(SPREADSHEET_KEY).worksheet("案件登録")
 
+  # 日付オブジェクトを取得
+        date_input = datetime.date.today()
 
-    # 日付オブジェクトを取得
-    date_input = datetime.date.today()
-    
     # 文字列に変換
-    date_str = date_input.strftime("%Y/%m/%d")
-    
+        date_str = date_input.strftime("%Y/%m/%d")
+
     # データを追加
-    sheet.append_row(
-        [int(new_id), date_str, golf_course, task, employee],
-        value_input_option='USER_ENTERED'
-    )
+        sheet.append_row([int(new_id), date_str, golf_course, task, employee],value_input_option='USER_ENTERED')
+
+
         
         st.success("案件が登録されました。")
 
