@@ -2,6 +2,12 @@ import streamlit as st
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
+#JSONを見に行く
+credentials = service_account.Credentials.from_service_account_info(
+    st.secrets["gcp_service_account"]
+)
+client = gspread.authorize(credentials)
+
 # Google Sheets の情報（🔴ここを設定）
 SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"  # あなたのスプレッドシートIDに置き換えてください
 SHEET_NAME = ""  # タブの名前（例: "ログイン情報"）
