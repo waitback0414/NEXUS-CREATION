@@ -141,6 +141,12 @@ def main():
     SHEET_NAME = "案件登録"
 
     df = get_project_list(SPREADSHEET_KEY, SHEET_NAME)
+    
+styled_df = df.style.set_table_styles([
+    {'selector': 'table', 'props': [('background-color', 'white'), ('color', 'black'), ('border', '1px solid black')]},
+    {'selector': 'th', 'props': [('background-color', 'white'), ('color', 'black'), ('border', '1px solid black')]},
+    {'selector': 'td', 'props': [('background-color', 'white'), ('color', 'black'), ('border', '1px solid black')]}
+])
 
     # ページネーション設定
     items_per_page = 60
