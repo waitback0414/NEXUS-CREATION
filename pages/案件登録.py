@@ -56,7 +56,7 @@ def generate_new_id(spreadsheet_key, sheet_name):
 
 new_id = generate_new_id(SPREADSHEET_KEY, "案件登録")
 
-# selected_date = st.date_input("日付を選択してください", datetime.date.today())
+selected_date = st.date_input("日付を選択してください", datetime.date.today())
 
 col1, col2, col3 = st.columns(3)
 with col1:
