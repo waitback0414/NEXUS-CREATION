@@ -62,8 +62,10 @@ def get_login_data():
 def authenticate(user_id, password, login_data):
     for record in login_data:
         if record.get("MAIL") == user_id and record.get("PASS") == password:
+            st.session_state["role"] = record.get("AUTHORITY", "user")  # ← 権限を記録（なければ user）
             return True
     return False
+
 
 # アプリ本体
 def main():
