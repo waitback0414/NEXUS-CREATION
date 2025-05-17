@@ -1,4 +1,7 @@
 import streamlit as st
+import gspread
+from google.oauth2.service_account import Credentials
+import datetime
 
 if st.session_state.get("role") != "admin":
     st.warning("このページは管理者専用です。")
@@ -6,9 +9,6 @@ if st.session_state.get("role") != "admin":
 
 st.title("案件登録")
 
-import gspread
-from google.oauth2.service_account import Credentials
-import datetime:contentReference[oaicite:9]{index=9}
 
 SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
 
@@ -50,7 +50,7 @@ def generate_new_id(spreadsheet_key, sheet_name):
     new_id = last_id + 1
     return str(new_id)
 
-new_id = generate_new_id(SPREADSHEET_KEY, "案件登録"):contentReference[oaicite:37]{index=37}
+new_id = generate_new_id(SPREADSHEET_KEY, "案件登録")
 
 selected_date = st.date_input("日付を選択してください", datetime.date.today())
 
