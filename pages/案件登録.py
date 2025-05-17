@@ -108,37 +108,83 @@ with st.form("案件登録フォーム"):
 
 
 # Streamlitアプリ
+
+
 def main():
-    st.title("案件閲覧")
+    st.title("案件一覧")
 
     SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
     SHEET_NAME = "案件登録"
 
     headers, records = get_project_list(SPREADSHEET_KEY, SHEET_NAME)
 
-    # チェックボックスの状態を保持するためのセッションステート
-    if "selected_rows" not in st.session_state:
-        st.session_state.selected_rows = [False] * len(records)
+    # ページネーション設定
+    items_per_page = 60
+    total_items = len(records)
+    total_pages = (total_items - 1) // items_per_page + 1
 
-    # テーブルのヘッダーを表示
+    if "current_page" not in st.session_state:
+        st.session_state.current_page = 1
+
+    if "selected_rows" not in st.session_state or len(st.session_state.selected_rows) != total_items:
+        st.session_state.selected_rows = [False] * total_items
+
+    # ページ切替ボタン
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col1:
+        if st.button("⬅️ 前へ") and st.session_state.current_page > 1:
+            st.session_state.current_page -= 1
+    with col3:
+        if st.button("次へ ➡️") and st.session_state.current_page < total_pages:
+            st.session_state.current_page += 1
+
+    start_idx = (st.session_state.current_page - 1) * items_per_page
+    end_idx = min(start_idx + items_per_page, total_items)
+    current_records = records[start_idx:end_idx]
+
+    # 表スタイル（罫線）
+    st.markdown("""
+    <style>
+    .styled-table {
+        border-collapse: collapse;
+        margin: 10px 0;
+        font-size: 14px;
+        width: 100%;
+        border: 1px solid #ddd;
+    }
+    .styled-table th, .styled-table td {
+        border: 1px solid #ddd;
+        padding: 6px 10px;
+        text-align: left;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # 表ヘッダー
     cols = st.columns(len(headers) + 1)
-    cols[0].write("選択")
-    for idx, header in enumerate(headers):
-        cols[idx + 1].write(header)
+    cols[0].markdown("**選択**")
+    for i, h in enumerate(headers):
+        cols[i+1].markdown(f"**{h}**")
 
-    # 各行を表示
-    for i, row in enumerate(records):
+    # 表データ + チェックボックス
+    for idx, row in enumerate(current_records):
+        global_idx = start_idx + idx
         cols = st.columns(len(headers) + 1)
-        st.session_state.selected_rows[i] = cols[0].checkbox("", value=st.session_state.selected_rows[i], key=f"checkbox_{i}")
-        for j, cell in enumerate(row):
-            cols[j + 1].write(cell)
+        st.session_state.selected_rows[global_idx] = cols[0].checkbox(
+            "", value=st.session_state.selected_rows[global_idx], key=f"cb_{global_idx}"
+        )
+        for j, val in enumerate(row):
+            cols[j+1].write(val)
 
-    # 選択された行の情報を表示
-    st.write("選択された案件:")
+    st.markdown(f"**📄 ページ {st.session_state.current_page} / {total_pages}**")
+
+    # 選択結果の表示
+    st.markdown("### ✅ 選択された案件")
     for i, selected in enumerate(st.session_state.selected_rows):
         if selected:
             st.write(records[i])
 
 if __name__ == "__main__":
     main()
+
 
