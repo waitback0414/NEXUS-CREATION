@@ -62,9 +62,9 @@ def main():
                     # ユーザーの権限に応じてリダイレクト
                     role = st.session_state.get("role", "user")
                     if role == "admin":
-                        st.switch_page("pages/admin_page.py")
+                        st.switch_page("pages/案件登録.py")
                     else:
-                        st.switch_page("pages/user_page.py")
+                        st.switch_page("pages/業務報告.py")
                 else:
                     st.error("ログインID または パスワードが間違っています。")
             except Exception as e:
