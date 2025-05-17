@@ -7,7 +7,7 @@ if st.session_state.get("role") != "admin":
     st.warning("このページは管理者専用です。")
     st.stop()
 
-st.title("案件登録と削除")
+st.title("案件登録")
 
 
 SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
@@ -42,7 +42,18 @@ SCOPES = [
     "https://www.googleapis.com/auth/drive"
 ]
 
+# 案件一覧のデータを取得
+def get_project_list(spreadsheet_key, sheet_name):
+    client = get_gspread_client()
+    sheet = client.open_by_key(spreadsheet_key).worksheet(sheet_name)
+    data = sheet.get_all_values()
+    headers = data[1]  # 2行目をヘッダーとする
+    records = data[2:]  # 3行目以降がデータ
 
+    # 案件番号（ID）で降順にソート
+    records.sort(key=lambda x: int(x[0]), reverse=True)
+
+    return headers, records
 
 def generate_new_id(spreadsheet_key, sheet_name):
     client = get_gspread_client()
@@ -94,4 +105,40 @@ with st.form("案件登録フォーム"):
         
         st.success("案件が登録されました。")
 
+
+st.title("案件閲覧")
+# Streamlitアプリ
+def main():
+    st.title("案件一覧")
+
+    SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
+    SHEET_NAME = "案件登録"
+
+    headers, records = get_project_list(SPREADSHEET_KEY, SHEET_NAME)
+
+    # チェックボックスの状態を保持するためのセッションステート
+    if "selected_rows" not in st.session_state:
+        st.session_state.selected_rows = [False] * len(records)
+
+    # テーブルのヘッダーを表示
+    cols = st.columns(len(headers) + 1)
+    cols[0].write("選択")
+    for idx, header in enumerate(headers):
+        cols[idx + 1].write(header)
+
+    # 各行を表示
+    for i, row in enumerate(records):
+        cols = st.columns(len(headers) + 1)
+        st.session_state.selected_rows[i] = cols[0].checkbox("", value=st.session_state.selected_rows[i], key=f"checkbox_{i}")
+        for j, cell in enumerate(row):
+            cols[j + 1].write(cell)
+
+    # 選択された行の情報を表示
+    st.write("選択された案件:")
+    for i, selected in enumerate(st.session_state.selected_rows):
+        if selected:
+            st.write(records[i])
+
+if __name__ == "__main__":
+    main()
 
