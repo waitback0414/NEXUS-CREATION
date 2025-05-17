@@ -80,7 +80,8 @@ with st.form("案件登録フォーム"):
     if submitted:
         client = get_gspread_client()
         sheet = client.open_by_key(SPREADSHEET_KEY).worksheet("案件登録")
-        sheet.append_row([new_id, date_input.strftime("%Y/%m/%d"), golf_course, task, employee])
+        sheet.append_row
+        ([int(new_id), date_input, golf_course, task, employee])
         st.success("案件が登録されました。")
 
 
