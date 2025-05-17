@@ -2,6 +2,22 @@ import streamlit as st
 import gspread
 from google.oauth2.service_account import Credentials
 
+# 必要なスコープ（Google Sheets + Drive）
+SCOPES = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive"
+]
+
+# Streamlit secrets から認証 + スコープ設定
+@st.cache_resource
+def get_gspread_client():
+    credentials = Credentials.from_service_account_info(
+        st.secrets["gcp_service_account"],
+        scopes=SCOPES  # ← 🔴これが重要
+    )
+    return gspread.authorize(credentials)
+
+
 # Google Sheets の情報
 SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"  # ←ここを自分のキーに置き換える
 SHEET_NAME = "従業員情報"  # ←タブ名
