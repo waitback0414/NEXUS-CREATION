@@ -142,42 +142,71 @@ def main():
 
     df = get_project_list(SPREADSHEET_KEY, SHEET_NAME)
 
-    styled_df = df.style.set_table_styles([
+# データの取得
+df = pd.DataFrame(records, columns=headers)
+
+# ページネーションの設定
+items_per_page = 60
+total_items = len(df)
+total_pages = (total_items - 1) // items_per_page + 1
+
+if "current_page" not in st.session_state:
+    st.session_state.current_page = 1
+
+# ページ切り替えボタン
+col1, col2, col3 = st.columns([1, 2, 1])
+with col1:
+    if st.button("⬅️ 前へ") and st.session_state.current_page > 1:
+        st.session_state.current_page -= 1
+with col3:
+    if st.button("次へ ➡️") and st.session_state.current_page < total_pages:
+        st.session_state.current_page += 1
+
+start_idx = (st.session_state.current_page - 1) * items_per_page
+end_idx = min(start_idx + items_per_page, total_items)
+current_df = df.iloc[start_idx:end_idx]
+
+# スタイルの適用
+styled_df = current_df.style.set_table_styles([
     {'selector': 'table', 'props': [('background-color', 'white'), ('color', 'black'), ('border', '1px solid black')]},
     {'selector': 'th', 'props': [('background-color', 'white'), ('color', 'black'), ('border', '1px solid black')]},
     {'selector': 'td', 'props': [('background-color', 'white'), ('color', 'black'), ('border', '1px solid black')]}
 ])
 
+# テーブルの表示
+st.table(styled_df)
 
-    # ページネーション設定
-    items_per_page = 60
-    total_items = len(df)
-    total_pages = (total_items - 1) // items_per_page + 1
 
-    if "current_page" not in st.session_state:
-        st.session_state.current_page = 1
 
-    if "selected_rows" not in st.session_state or len(st.session_state.selected_rows) != total_items:
-        st.session_state.selected_rows = [False] * total_items
+    # # ページネーション設定
+    # items_per_page = 60
+    # total_items = len(df)
+    # total_pages = (total_items - 1) // items_per_page + 1
 
-    # ページ切替ボタン
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col1:
-        if st.button("⬅️ 前へ") and st.session_state.current_page > 1:
-            st.session_state.current_page -= 1
-    with col3:
-        if st.button("次へ ➡️") and st.session_state.current_page < total_pages:
-            st.session_state.current_page += 1
+    # if "current_page" not in st.session_state:
+    #     st.session_state.current_page = 1
 
-    start_idx = (st.session_state.current_page - 1) * items_per_page
-    end_idx = min(start_idx + items_per_page, total_items)
-    current_df = styled_df.iloc[start_idx:end_idx]
+    # if "selected_rows" not in st.session_state or len(st.session_state.selected_rows) != total_items:
+    #     st.session_state.selected_rows = [False] * total_items
 
-    # 表ヘッダー
-    cols = st.columns(len(df.columns) + 1)
-    cols[0].markdown("**選択**")
-    for i, h in enumerate(df.columns):
-        cols[i+1].markdown(f"**{h}**")
+    # # ページ切替ボタン
+    # col1, col2, col3 = st.columns([1, 2, 1])
+    # with col1:
+    #     if st.button("⬅️ 前へ") and st.session_state.current_page > 1:
+    #         st.session_state.current_page -= 1
+    # with col3:
+    #     if st.button("次へ ➡️") and st.session_state.current_page < total_pages:
+    #         st.session_state.current_page += 1
+
+    # start_idx = (st.session_state.current_page - 1) * items_per_page
+    # end_idx = min(start_idx + items_per_page, total_items)
+    # current_df = styled_df.iloc[start_idx:end_idx]
+
+    # # 表ヘッダー
+    # cols = st.columns(len(df.columns) + 1)
+    # cols[0].markdown("**選択**")
+    # for i, h in enumerate(df.columns):
+    #     cols[i+1].markdown(f"**{h}**")
 
     # 表データ + チェックボックス
     for idx, row in current_df.iterrows():
