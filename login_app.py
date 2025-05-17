@@ -1,30 +1,7 @@
-# import streamlit as st
-# import gspread
-# from google.oauth2.service_account import Credentials
-
-# SCOPES = [
-#     "https://www.googleapis.com/auth/spreadsheets",
-#     "https://www.googleapis.com/auth/drive"
-# ]
-
-# SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
-# SHEET_NAME = "従業員一覧"
-
-# try:
-#     credentials = Credentials.from_service_account_info(
-#         st.secrets["gcp_service_account"],
-#         scopes=SCOPES
-#     )
-#     client = gspread.authorize(credentials)
-#     sheet = client.open_by_key(SPREADSHEET_KEY).worksheet(SHEET_NAME)
-#     st.success("認証と読み込みに成功しました！")
-#     st.write(sheet.get_all_values())
-# except Exception as e:
-#     st.error(f"ログインエラー: {e}")
-
 import streamlit as st
 import gspread
 from google.oauth2.service_account import Credentials
+import time
 
 # 必要なスコープ（Google Sheets + Drive）
 SCOPES = [
@@ -37,15 +14,13 @@ SCOPES = [
 def get_gspread_client():
     credentials = Credentials.from_service_account_info(
         st.secrets["gcp_service_account"],
-        scopes=SCOPES  # ← 🔴これが重要
+        scopes=SCOPES
     )
     return gspread.authorize(credentials)
 
-
 # Google Sheets の情報
-SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"  # ←ここを自分のキーに置き換える
-SHEET_NAME = "従業員一覧"  # ←タブ名
-
+SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
+SHEET_NAME = "従業員一覧"
 
 # ログイン情報を取得
 def get_login_data():
@@ -62,10 +37,9 @@ def get_login_data():
 def authenticate(user_id, password, login_data):
     for record in login_data:
         if record.get("MAIL") == user_id and record.get("PASS") == password:
-            st.session_state["role"] = record.get("AUTHORITY", "user")  # ← 権限を記録（なければ user）
+            st.session_state["role"] = record.get("AUTHORITY", "user")  # 権限を記録（なければ user）
             return True
     return False
-
 
 # アプリ本体
 def main():
@@ -84,6 +58,13 @@ def main():
                 if authenticate(user_id, password, login_data):
                     st.session_state.logged_in = True
                     st.success("ログイン成功！")
+                    time.sleep(1)  # 成功メッセージを表示するための待機
+                    # ユーザーの権限に応じてリダイレクト
+                    role = st.session_state.get("role", "user")
+                    if role == "admin":
+                        st.switch_page("pages/admin_page.py")
+                    else:
+                        st.switch_page("pages/user_page.py")
                 else:
                     st.error("ログインID または パスワードが間違っています。")
             except Exception as e:
@@ -94,6 +75,7 @@ def main():
 
         if st.button("ログアウト"):
             st.session_state.logged_in = False
+            st.session_state.role = "user"
 
 if __name__ == "__main__":
     main()
