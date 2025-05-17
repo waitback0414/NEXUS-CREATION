@@ -143,6 +143,7 @@ def main():
     current_records = records[start_idx:end_idx]
 
     # 表スタイル（罫線）
+   
     st.markdown("""
     <style>
     .styled-table {
@@ -150,10 +151,12 @@ def main():
         margin: 10px 0;
         font-size: 14px;
         width: 100%;
-        border: 1px solid #ddd;
+        background-color: #ffffff; /* 背景色を白に設定 */
+        color: #000000; 
+        border: 1px solid #000000;
     }
     .styled-table th, .styled-table td {
-        border: 1px solid #ddd;
+        border: 1px solid #000000;
         padding: 6px 10px;
         text-align: left;
     }
