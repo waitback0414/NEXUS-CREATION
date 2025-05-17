@@ -2,6 +2,7 @@ import streamlit as st
 import gspread
 from google.oauth2.service_account import Credentials
 import datetime
+import pandas as pd
 
 if st.session_state.get("role") != "admin":
     st.warning("このページは管理者専用です。")
@@ -106,10 +107,9 @@ with st.form("案件登録フォーム"):
         st.success("案件が登録されました。")
 
 
-st.title("案件閲覧")
 # Streamlitアプリ
 def main():
-    st.title("案件一覧")
+    st.title("案件閲覧")
 
     SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
     SHEET_NAME = "案件登録"
