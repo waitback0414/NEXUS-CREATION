@@ -46,13 +46,6 @@ def get_gspread_client():
 SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"  # ←ここを自分のキーに置き換える
 SHEET_NAME = "従業員一覧"  # ←タブ名
 
-# 認証して gspread クライアントを返す
-@st.cache_resource
-def get_gspread_client():
-    credentials = Credentials.from_service_account_info(
-        st.secrets["gcp_service_account"]
-    )
-    return gspread.authorize(credentials)
 
 # ログイン情報を取得
 def get_login_data():
