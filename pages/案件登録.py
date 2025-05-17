@@ -11,6 +11,9 @@ st.title("案件登録")
 
 
 SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
+
+#st.cacheは先に
+@st.cache_resource
 def get_gspread_client():
     credentials = Credentials.from_service_account_info(
         st.secrets["gcp_service_account"],
@@ -39,7 +42,7 @@ SCOPES = [
     "https://www.googleapis.com/auth/drive"
 ]
 
-@st.cache_resource
+
 
 def generate_new_id(spreadsheet_key, sheet_name):
     client = get_gspread_client()
