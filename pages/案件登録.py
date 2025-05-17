@@ -11,6 +11,21 @@ st.title("案件登録")
 
 
 SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
+def get_gspread_client():
+    credentials = Credentials.from_service_account_info(
+        st.secrets["gcp_service_account"],
+        scopes=SCOPES
+    )
+    return gspread.authorize(credentials)
+
+
+def get_list_from_sheet(spreadsheet_key, sheet_name, column_index):
+    client = get_gspread_client()
+    sheet = client.open_by_key(spreadsheet_key).worksheet(sheet_name)
+    data = sheet.get_all_values()
+    headers = data[1]  # 2行目をヘッダーとする
+    records = data[2:]  # 3行目以降がデータ
+    return [row[column_index] for row in records if len(row) > column_index]
 
 golf_courses = get_list_from_sheet(SPREADSHEET_KEY, "ゴルフ場一覧", 1)  # B列
 tasks = get_list_from_sheet(SPREADSHEET_KEY, "作業一覧", 1)  # B列
@@ -25,20 +40,6 @@ SCOPES = [
 ]
 
 @st.cache_resource
-def get_gspread_client():
-    credentials = Credentials.from_service_account_info(
-        st.secrets["gcp_service_account"],
-        scopes=SCOPES
-    )
-    return gspread.authorize(credentials)
-
-def get_list_from_sheet(spreadsheet_key, sheet_name, column_index):
-    client = get_gspread_client()
-    sheet = client.open_by_key(spreadsheet_key).worksheet(sheet_name)
-    data = sheet.get_all_values()
-    headers = data[1]  # 2行目をヘッダーとする
-    records = data[2:]  # 3行目以降がデータ
-    return [row[column_index] for row in records if len(row) > column_index]
 
 def generate_new_id(spreadsheet_key, sheet_name):
     client = get_gspread_client()
