@@ -168,6 +168,20 @@ def main():
     SPREADSHEET_KEY = "your_spreadsheet_key"
     SHEET_NAME = "案件登録"
 
+
+    SCOPES = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive"
+    ]
+
+    credentials = Credentials.from_service_account_file(
+    'path/to/your/service_account.json',
+    scopes=SCOPES
+    )
+
+    client = gspread.authorize(credentials)
+
+
     headers, records = get_project_list(SPREADSHEET_KEY, SHEET_NAME)
     df = pd.DataFrame(records, columns=headers)
 
