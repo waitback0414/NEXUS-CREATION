@@ -82,6 +82,8 @@ def generate_new_id(spreadsheet_key, sheet_name):
 
 new_id = generate_new_id(SPREADSHEET_KEY, "案件登録")
 
+if "selected_date" not in st.session_state:
+    st.session_state.selected_date = datetime.date.today()
 selected_date = datetime.date.today()
 selected_date = st.session_state.selected_date
 st.write(f"選択された日付: {selected_date.strftime('%Y/%m/%d')}")
