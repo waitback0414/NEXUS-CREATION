@@ -145,40 +145,47 @@ def get_filtered_projects(spreadsheet_key, sheet_name, selected_date):
 # else:
 #     st.info("該当する案件は見つかりませんでした。")
 
-# フィルタ関数（省略せず呼び出し済みとする）
-headers, filtered_records = get_filtered_projects(SPREADSHEET_KEY, SHEET_NAME, selected_date)
 
-# データがなければ終了
-if not filtered_records:
-    st.info("該当する案件は見つかりませんでした。")
-    st.stop()
 
-# DataFrame 化
-df = pd.DataFrame(filtered_records, columns=headers)
+st.write("取得した headers:", headers)
 
-# セッションにチェック状態を保存
-if "delete_flags" not in st.session_state or len(st.session_state.delete_flags) != len(df):
-    st.session_state.delete_flags = [False] * len(df)
+# >>>>>>
 
-st.subheader("該当する案件リスト（選択して削除）")
 
-# 表示 + チェックボックス
-for i, row in df.iterrows():
-    cols = st.columns([0.1, 0.9])
-    st.session_state.delete_flags[i] = cols[0].checkbox("", value=st.session_state.delete_flags[i], key=f"chk_{i}")
-    cols[1].markdown(
-        f"**案件番号:** {row['案件番号']}｜**日付:** {row['日付']}｜**ゴルフ場:** {row['ゴルフ場']}｜"
-        f"**作業内容:** {row['作業内容']}｜**名前:** {row['名前']}"
-    )
+# # フィルタ関数（省略せず呼び出し済みとする）
+# headers, filtered_records = get_filtered_projects(SPREADSHEET_KEY, SHEET_NAME, selected_date)
 
-# 削除ボタン処理
-if st.button("チェックされた案件を削除する"):
-    selected_indices = [i for i, flag in enumerate(st.session_state.delete_flags) if flag]
-    if selected_indices:
-        st.warning("以下の案件が削除対象です（※ここでは削除処理は未実装です）")
-        st.dataframe(df.iloc[selected_indices])
-        # TODO: Google Sheets から削除処理を追加
-    else:
+# # データがなければ終了
+# if not filtered_records:
+#     st.info("該当する案件は見つかりませんでした。")
+#     st.stop()
+
+# # DataFrame 化
+# df = pd.DataFrame(filtered_records, columns=headers)
+
+# # セッションにチェック状態を保存
+# if "delete_flags" not in st.session_state or len(st.session_state.delete_flags) != len(df):
+#     st.session_state.delete_flags = [False] * len(df)
+
+# st.subheader("該当する案件リスト（選択して削除）")
+
+# # 表示 + チェックボックス
+# for i, row in df.iterrows():
+#     cols = st.columns([0.1, 0.9])
+#     st.session_state.delete_flags[i] = cols[0].checkbox("", value=st.session_state.delete_flags[i], key=f"chk_{i}")
+#     cols[1].markdown(
+#         f"**案件番号:** {row['案件番号']}｜**日付:** {row['日付']}｜**ゴルフ場:** {row['ゴルフ場']}｜"
+#         f"**作業内容:** {row['作業内容']}｜**名前:** {row['名前']}"
+#     )
+
+# # 削除ボタン処理
+# if st.button("チェックされた案件を削除する"):
+#     selected_indices = [i for i, flag in enumerate(st.session_state.delete_flags) if flag]
+#     if selected_indices:
+#         st.warning("以下の案件が削除対象です（※ここでは削除処理は未実装です）")
+#         st.dataframe(df.iloc[selected_indices])
+#         # TODO: Google Sheets から削除処理を追加
+#     else:
         st.info("削除対象が選ばれていません。")
 
 
