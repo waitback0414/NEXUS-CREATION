@@ -83,6 +83,8 @@ def generate_new_id(spreadsheet_key, sheet_name):
 new_id = generate_new_id(SPREADSHEET_KEY, "案件登録")
 
 selected_date = datetime.date.today()
+selected_date = st.session_state.selected_date
+st.write(f"選択された日付: {selected_date.strftime('%Y/%m/%d')}")
 
 col1, col2, col3 = st.columns(3)
 with col1:
@@ -103,8 +105,7 @@ with st.form("案件登録フォーム"):
     employee = st.selectbox("名前を選択してください", employees)
     submitted = st.form_submit_button("登録")
 
-selected_date = st.session_state.selected_date
-st.write(f"選択された日付: {selected_date.strftime('%Y/%m/%d')}")
+
 
     if submitted:
         client = get_gspread_client()
@@ -123,20 +124,16 @@ st.write(f"選択された日付: {selected_date.strftime('%Y/%m/%d')}")
         
         st.success("案件が登録されました。")
 
-headers, filtered_records = get_filtered_projects(SPREADSHEET_KEY, SHEET_NAME, selected_date)
-
-st.subheader("該当する案件リスト")
-if filtered_records:
-    for row in filtered_records:
-        st.markdown(f"""
-        **案件番号:** {row[0]}  
-        **日付:** {row[1]}  
-        **ゴルフ場:** {row[2]}  
-        **作業内容:** {row[3]}  
-        **名前:** {row[4]}
-        """)
-else:
-    st.info("該当する案件は見つかりませんでした。")
-
-
-
+    headers, filtered_records = get_filtered_projects(SPREADSHEET_KEY, SHEET_NAME, selected_date)
+    st.subheader("該当する案件リスト")
+    if filtered_records:
+        for row in filtered_records:
+            st.markdown(f"""
+            **案件番号:** {row[0]}  
+            **日付:** {row[1]}  
+            **ゴルフ場:** {row[2]}  
+            **作業内容:** {row[3]}  
+            **名前:** {row[4]}
+            """)
+    else:
+        st.info("該当する案件は見つかりませんでした。")
