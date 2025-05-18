@@ -54,7 +54,7 @@ filtered_records = [
 ]
 
 st.write(f"いつもご苦労様です、{st.session_state['username']} さん！")
-st.write(f"いつもご苦労様です、{st.session_state['user_email']} さん！")
+# st.write(f"いつもご苦労様です、{st.session_state['user_email']} さん！")
 st.title("業務報告")
 
 if not filtered_records:
