@@ -63,7 +63,7 @@ for idx, row in enumerate(pending_rows):
             submitted = st.form_submit_button("登録")
 
             if submitted:
-                report_sheet = client.open_by_key(SPREADSHEET_KEY).worksheet("日報回答")
+                report_sheet = client.open_by_key(SPREADSHEET_KEY).worksheet("日報回答2")
                 report_sheet.append_row([
                     timestamp,
                     user_email,
