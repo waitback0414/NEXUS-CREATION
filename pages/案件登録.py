@@ -130,7 +130,7 @@ def get_filtered_projects(spreadsheet_key, sheet_name, selected_date):
 
 
 # 使用部分（インデント注意）
-# headers, filtered_records = get_filtered_projects(SPREADSHEET_KEY, SHEET_NAME , selected_date)
+headers, filtered_records = get_filtered_projects(SPREADSHEET_KEY, SHEET_NAME , selected_date)
 
 # st.subheader("該当する案件リスト")
 # if filtered_records:
@@ -149,7 +149,7 @@ def get_filtered_projects(spreadsheet_key, sheet_name, selected_date):
 
 # filtered_records: [["240001", "2025/05/18", "ABC", "キャディー", "山田太郎"], ...]
 headers = ["案件番号", "日付", "ゴルフ場", "作業内容", "名前"]
-df = pd.DataFrame(filtered_projects, columns=headers)
+df = pd.DataFrame(filtered_records, columns=headers)
 
 # チェックボックスを表示するための列を作成
 if "delete_flags" not in st.session_state or len(st.session_state.delete_flags) != len(df):
