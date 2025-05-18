@@ -127,7 +127,7 @@ with st.form("案件登録フォーム"):
         st.success("案件が登録されました。")
 
     headers, filtered_records = get_filtered_projects(SPREADSHEET_KEY, sheet-name, selected_date)
-    sheet-name = "案件一覧"
+    sheet_name = "案件一覧"
     st.subheader("該当する案件リスト")
     if filtered_records:
         for row in filtered_records:
