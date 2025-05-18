@@ -56,18 +56,18 @@ def get_project_list(spreadsheet_key, sheet_name):
 
     return headers, records
 
-# def get_filtered_projects(spreadsheet_key, sheet_name, selected_date):
-#     client = get_gspread_client()
-#     sheet = client.open_by_key(spreadsheet_key).worksheet(sheet_name)
-#     data = sheet.get_all_values()
-#     headers = data[1]  # 2行目: ヘッダー
-#     records = data[2:]  # 3行目以降
+def get_filtered_projects(spreadsheet_key, sheet_name, selected_date):
+    client = get_gspread_client()
+    sheet = client.open_by_key(spreadsheet_key).worksheet(sheet_name)
+    data = sheet.get_all_values()
+    headers = data[1]  # 2行目: ヘッダー
+    records = data[2:]  # 3行目以降
 
-#     filtered = [
-#         row for row in records
-#         if len(row) > 1 and row[1] == selected_date.strftime("%Y/%m/%d")
-#     ]
-#     return headers, filtered
+    filtered = [
+        row for row in records
+        if len(row) > 1 and row[1] == selected_date.strftime("%Y/%m/%d")
+    ]
+    return headers, filtered
 
 
 def generate_new_id(spreadsheet_key, sheet_name):
