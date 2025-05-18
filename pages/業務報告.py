@@ -18,14 +18,39 @@ def get_gspread_client():
 SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
 
 # ログインユーザーの情報（セッションステートから取得）
-
-user_email = st.session_state.get("user_email")
 # # ユーザー名の取得（ログイン時にセッションステートに保存されていると仮定）
+user_email = st.session_state.get("user_email")
 username = st.session_state.get("username", None)
 
 if not username:
     st.warning("ログインしてください。")
     st.stop()
+
+
+
+client = get_gspread_client()
+sheet = client.open_by_key(SPREADSHEET_KEY).worksheet(SHEET_NAME)
+data = sheet.get_all_values()
+headers = data[1]  # 2行目
+records = data[2:]  # 3行目以降
+
+# 必要な列インデックス（列A:0, B:1, ..., K:10）
+col_indices = {
+    "A": 0,
+    "B": 1,
+    "D": 3,
+    "E": 4,
+    "G": 6,
+    "K": 10
+}
+
+# --- ここで filtered_records を定義 ---
+filtered_records = [
+    row for row in records
+    if len(row) > max(col_indices.values()) and
+       row[col_indices["G"]] == username and
+       row[col_indices["K"]] == ""
+]
 
 
 st.title("業務報告")
