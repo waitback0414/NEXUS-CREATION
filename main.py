@@ -39,6 +39,7 @@ def authenticate(user_id, password, login_data):
         if record.get("MAIL") == user_id and record.get("PASS") == password:
             st.session_state["role"] = record.get("AUTHORITY", "user")  # 権限を記録（なければ user）
             st.session_state["username"] = record.get("NAME", "")  # ユーザー名を記録
+            st.session_state["user_email"] = record.get("MAIL", "")  # ユーザー名を記録
             return True
     return False
 
