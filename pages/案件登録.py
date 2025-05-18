@@ -57,8 +57,8 @@ def get_project_list(spreadsheet_key, sheet_name):
     return headers, records
 
 def get_filtered_projects(spreadsheet_key, sheet_name, selected_date):
-    sheet_name = "案件一覧"
     client = get_gspread_client()
+    sheet_name = "案件一覧"
     sheet = client.open_by_key(spreadsheet_key).worksheet(sheet_name)
     data = sheet.get_all_values()
     headers = data[1]  # 2行目: ヘッダー
