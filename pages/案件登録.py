@@ -116,12 +116,6 @@ def main():
     SHEET_NAME = "案件登録"
 
     df = get_project_list(SPREADSHEET_KEY, SHEET_NAME)
-    # 変更後
-
-
-# データの取得
-df = pd.DataFrame(records, columns=headers)
-
 
     # ページネーション設定
     items_per_page = 60
