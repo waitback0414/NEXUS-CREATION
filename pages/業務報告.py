@@ -18,12 +18,15 @@ def get_gspread_client():
 SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
 
 # ログインユーザーの情報（セッションステートから取得）
-username = st.session_state.get("username")
-user_email = st.session_state.get("user_email")
 
-if not username or not user_email:
+user_email = st.session_state.get("user_email")
+# # ユーザー名の取得（ログイン時にセッションステートに保存されていると仮定）
+username = st.session_state.get("username", None)
+
+if not username:
     st.warning("ログインしてください。")
     st.stop()
+
 
 st.title("業務報告")
 
