@@ -12,6 +12,7 @@ st.title("案件登録")
 
 
 SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
+SHEET_NAME = "案件登録"
 
 #st.cacheは先に
 @st.cache_resource
@@ -129,7 +130,7 @@ def get_filtered_projects(spreadsheet_key, sheet_name, selected_date):
 
 
 # 使用部分（インデント注意）
-headers, filtered_records = get_filtered_projects(SPREADSHEET_KEY, sheet_name , selected_date)
+headers, filtered_records = get_filtered_projects(SPREADSHEET_KEY, SHEET_NAME , selected_date)
 
 st.subheader("該当する案件リスト")
 if filtered_records:
