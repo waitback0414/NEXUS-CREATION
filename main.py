@@ -60,6 +60,7 @@ def main():
                     st.success("ログイン成功！")
                     time.sleep(1)  # 成功メッセージを表示するための待機
                     # ユーザーの権限に応じてリダイレクト
+                    st.session_state["username"] = record.get("NAME", "")
                     role = st.session_state.get("role", "user")
                     if role == "admin":
                         st.switch_page("pages/案件登録.py")
