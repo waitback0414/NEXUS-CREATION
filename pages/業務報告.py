@@ -15,7 +15,7 @@ def get_gspread_client():
     return gspread.authorize(credentials)
 
 # スプレッドシートのキー
-SPREADSHEET_KEY = "YOUR_SPREADSHEET_KEY"
+SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
 
 # ログインユーザーの情報（セッションステートから取得）
 username = st.session_state.get("username")
