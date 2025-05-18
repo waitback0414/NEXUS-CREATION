@@ -38,6 +38,7 @@ def authenticate(user_id, password, login_data):
     for record in login_data:
         if record.get("MAIL") == user_id and record.get("PASS") == password:
             st.session_state["role"] = record.get("AUTHORITY", "user")  # 権限を記録（なければ user）
+            st.session_state["username"] = record.get("NAME")  # ユーザー名を保存
             return True
     return False
 
@@ -58,10 +59,6 @@ def main():
                 if authenticate(user_id, password, login_data):
                     st.session_state.logged_in = True
                     st.success("ログイン成功！")
-                    # 追加した行
-                    st.session_state.role = record.get("AUTHORITY", "user")  # 権限を記録
-                    st.session_state.username = record.get("NAME", "ユーザー")  # ユーザー名を記録
-                    # ここまで。
                     time.sleep(1)  # 成功メッセージを表示するための待機
                     # ユーザーの権限に応じてリダイレクト
                     role = st.session_state.get("role", "user")
@@ -80,6 +77,7 @@ def main():
         if st.button("ログアウト"):
             st.session_state.logged_in = False
             st.session_state.role = "user"
+            st.session_state.pop("username", None)  # ユーザー名を削除
 
 if __name__ == "__main__":
     main()
