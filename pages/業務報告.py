@@ -134,6 +134,6 @@ else:
                         st.success("日報が登録されました ✅")
                         time.sleep(1)
                         st.session_state[f"show_text_{key_suffix}"] = False
-                        st.experimental_rerun()
+                        st.rerun()
 
 
