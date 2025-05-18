@@ -137,10 +137,15 @@ def get_project_list(spreadsheet_key, sheet_name):
 def main():
     st.title("案件一覧")
 
+    headers = data[1]  # 2行目をヘッダーとする
+    records = data[2:]  # 3行目以降がデータ
+    
     SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
     SHEET_NAME = "案件登録"
 
     df = get_project_list(SPREADSHEET_KEY, SHEET_NAME)
+    # 変更後
+
 
 # データの取得
 df = pd.DataFrame(records, columns=headers)
