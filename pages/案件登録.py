@@ -143,7 +143,7 @@ def main():
 
     start_idx = (st.session_state.current_page - 1) * items_per_page
     end_idx = min(start_idx + items_per_page, total_items)
-    current_df = styled_df.iloc[start_idx:end_idx]
+    current_df = df.iloc[start_idx:end_idx]
 
     # 表ヘッダー
     cols = st.columns(len(df.columns) + 1)
