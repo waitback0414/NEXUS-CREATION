@@ -58,7 +58,7 @@ def main():
                 if authenticate(user_id, password, login_data):
                     st.session_state.logged_in = True
                     st.success("ログイン成功！")
-                    # st.session_state.role = record.get("AUTHORITY", "user")  # 権限を記録
+                    st.session_state.role = record.get("AUTHORITY", "user")  # 権限を記録
                     st.session_state.username = record.get("NAME", "ユーザー")  # ユーザー名を記録
                     time.sleep(1)  # 成功メッセージを表示するための待機
                     # ユーザーの権限に応じてリダイレクト
