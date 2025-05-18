@@ -20,10 +20,8 @@ credentials = Credentials.from_service_account_info(
 )
 client = gspread.authorize(credentials)
 
-SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
-
 # スプレッドシートとシートの指定
-SPREADSHEET_KEY = "YOUR_SPREADSHEET_KEY"
+SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
 SHEET_NAME = "予約一覧"
 
 # ユーザー名の取得（ログイン時にセッションステートに保存されていると仮定）
