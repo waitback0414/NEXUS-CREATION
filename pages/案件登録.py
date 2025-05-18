@@ -56,6 +56,20 @@ def get_project_list(spreadsheet_key, sheet_name):
 
     return headers, records
 
+def get_filtered_projects(spreadsheet_key, sheet_name, selected_date):
+    client = get_gspread_client()
+    sheet = client.open_by_key(spreadsheet_key).worksheet(sheet_name)
+    data = sheet.get_all_values()
+    headers = data[1]  # 2行目: ヘッダー
+    records = data[2:]  # 3行目以降
+
+    filtered = [
+        row for row in records
+        if len(row) > 1 and row[1] == selected_date.strftime("%Y/%m/%d")
+    ]
+    return headers, filtered
+
+
 def generate_new_id(spreadsheet_key, sheet_name):
     client = get_gspread_client()
     sheet = client.open_by_key(spreadsheet_key).worksheet(sheet_name)
@@ -89,6 +103,9 @@ with st.form("案件登録フォーム"):
     employee = st.selectbox("名前を選択してください", employees)
     submitted = st.form_submit_button("登録")
 
+selected_date = st.session_state.selected_date
+st.write(f"選択された日付: {selected_date.strftime('%Y/%m/%d')}")
+
     if submitted:
         client = get_gspread_client()
         sheet = client.open_by_key(SPREADSHEET_KEY).worksheet("案件登録")
@@ -106,110 +123,20 @@ with st.form("案件登録フォーム"):
         
         st.success("案件が登録されました。")
 
-# # def main():
-# #     st.title("案件一覧")
+headers, filtered_records = get_filtered_projects(SPREADSHEET_KEY, SHEET_NAME, selected_date)
 
-# #     SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
-# #     SHEET_NAME = "案件登録"
-
-# #     headers, records = get_project_list(SPREADSHEET_KEY, SHEET_NAME)
-# #     data = records  # 'data' を定義
-# #     headers = data[1]  # 2行目をヘッダーとする
-# #     records = data[2:]  # 3行目以降がデータ
-# #     df = pd.DataFrame(records, columns=headers)
-
-# #     # 以下、df を使用して処理を続けます
-# #     df = get_project_list(SPREADSHEET_KEY, SHEET_NAME)
-
-# #     # ページネーション設定
-# #     items_per_page = 60
-# #     total_items = len(df)
-# #     total_pages = (total_items - 1) // items_per_page + 1
-
-# #     if "current_page" not in st.session_state:
-# #         st.session_state.current_page = 1
-
-# #     if "selected_rows" not in st.session_state or len(st.session_state.selected_rows) != total_items:
-# #         st.session_state.selected_rows = [False] * total_items
-
-# #     # ページ切替ボタン
-# #     col1, col2, col3 = st.columns([1, 2, 1])
-# #     with col1:
-# #         if st.button("⬅️ 前へ") and st.session_state.current_page > 1:
-# #             st.session_state.current_page -= 1
-# #     with col3:
-# #         if st.button("次へ ➡️") and st.session_state.current_page < total_pages:
-# #             st.session_state.current_page += 1
-
-# #     start_idx = (st.session_state.current_page - 1) * items_per_page
-# #     end_idx = min(start_idx + items_per_page, total_items)
-# #     current_df = df.iloc[start_idx:end_idx]
-
-# #     # 表ヘッダー
-# #     cols = st.columns(len(df.columns) + 1)
-# #     cols[0].markdown("**選択**")
-# #     for i, h in enumerate(df.columns):
-# #         cols[i+1].markdown(f"**{h}**")
-
-# #     # 表データ + チェックボックス
-# #     for idx, row in current_df.iterrows():
-# #         cols = st.columns(len(df.columns) + 1)
-# #         st.session_state.selected_rows[idx] = cols[0].checkbox(
-# #             "", value=st.session_state.selected_rows[idx], key=f"cb_{idx}"
-# #         )
-# #         for j, val in enumerate(row):
-# #             cols[j+1].write(val)
-
-# #     st.markdown(f"**📄 ページ {st.session_state.current_page} / {total_pages}**")
-
-# def main():
-#     st.title("案件一覧")
-
-#     SPREADSHEET_KEY = "your_spreadsheet_key"
-#     SHEET_NAME = "案件登録"
+st.subheader("該当する案件リスト")
+if filtered_records:
+    for row in filtered_records:
+        st.markdown(f"""
+        **案件番号:** {row[0]}  
+        **日付:** {row[1]}  
+        **ゴルフ場:** {row[2]}  
+        **作業内容:** {row[3]}  
+        **名前:** {row[4]}
+        """)
+else:
+    st.info("該当する案件は見つかりませんでした。")
 
 
-#     SCOPES = [
-#     "https://www.googleapis.com/auth/spreadsheets",
-#     "https://www.googleapis.com/auth/drive"
-#     ]
 
-#     credentials = Credentials.from_service_account_file(
-#     'path/to/your/service_account.json',
-#     scopes=SCOPES
-#     )
-
-#     client = gspread.authorize(credentials)
-
-
-#     headers, records = get_project_list(SPREADSHEET_KEY, SHEET_NAME)
-#     df = pd.DataFrame(records, columns=headers)
-
-#     # ページネーション設定
-#     items_per_page = 60
-#     total_items = len(df)
-#     total_pages = (total_items - 1) // items_per_page + 1
-
-#     if "current_page" not in st.session_state:
-#         st.session_state.current_page = 1
-
-#     start_idx = (st.session_state.current_page - 1) * items_per_page
-#     end_idx = min(start_idx + items_per_page, total_items)
-#     current_df = df.iloc[start_idx:end_idx]
-
-#     # テーブルの表示
-#     st.dataframe(current_df)
-
-#     # ページ切替ボタン
-#     col1, col2, col3 = st.columns([1, 2, 1])
-#     with col1:
-#         if st.button("⬅️ 前へ") and st.session_state.current_page > 1:
-#             st.session_state.current_page -= 1
-#     with col3:
-#         if st.button("次へ ➡️") and st.session_state.current_page < total_pages:
-#             st.session_state.current_page += 1
-
-#     st.markdown(f"**📄 ページ {st.session_state.current_page} / {total_pages}**")
-    
-# if __name__ == "__main__":
-#     main()
