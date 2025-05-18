@@ -1,8 +1,10 @@
 import streamlit as st
 
-if "logged_in" not in st.session_state or not st.session_state.logged_in:
+if "username" in st.session_state:
+    st.write(f"こんにちは、{st.session_state['username']}さん！")
+else:
     st.warning("ログインしてください。")
     st.stop()
 
 st.title("業務報告")
-st.write(f"こんにちは、{st.session_state['username']}さん！")
+st.write("ここに通常ユーザー向けの機能を実装します。")
