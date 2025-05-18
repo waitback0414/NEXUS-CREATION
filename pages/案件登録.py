@@ -186,6 +186,6 @@ st.write("取得した headers:", headers)
 #         st.dataframe(df.iloc[selected_indices])
 #         # TODO: Google Sheets から削除処理を追加
 #     else:
-        st.info("削除対象が選ばれていません。")
+#         st.info("削除対象が選ばれていません。")
 
 
