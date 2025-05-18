@@ -56,18 +56,6 @@ def get_project_list(spreadsheet_key, sheet_name):
 
     return headers, records
 
-def get_filtered_projects(spreadsheet_key, sheet_name, selected_date):
-    client = get_gspread_client()
-    sheet = client.open_by_key(spreadsheet_key).worksheet(sheet_name)
-    data = sheet.get_all_values()
-    headers = data[1]  # 2行目: ヘッダー
-    records = data[2:]  # 3行目以降
-
-    filtered = [
-        row for row in records
-        if len(row) > 1 and row[1] == selected_date.strftime("%Y/%m/%d")
-    ]
-    return headers, filtered
 
 
 def generate_new_id(spreadsheet_key, sheet_name):
@@ -125,18 +113,31 @@ with st.form("案件登録フォーム"):
 
         
         st.success("案件が登録されました。")
+        
+def get_filtered_projects(spreadsheet_key, sheet_name, selected_date):
+    client = get_gspread_client()
+    sheet = client.open_by_key(spreadsheet_key).worksheet(sheet_name)
+    data = sheet.get_all_values()
+    headers = data[1]  # 2行目: ヘッダー
+    records = data[2:]  # 3行目以降
 
-    # headers, filtered_records = get_filtered_projects(SPREADSHEET_KEY, sheet_name, selected_date)
-    # sheet_name = "案件一覧"
-    # st.subheader("該当する案件リスト")
-    # if filtered_records:
-    #     for row in filtered_records:
-    #         st.markdown(f"""
-    #         **案件番号:** {row[0]}  
-    #         **日付:** {row[1]}  
-    #         **ゴルフ場:** {row[2]}  
-    #         **作業内容:** {row[3]}  
-    #         **名前:** {row[4]}
-    #         """)
-    # else:
-    #     st.info("該当する案件は見つかりませんでした。")
+    filtered = [
+        row for row in records
+        if len(row) > 1 and row[1] == selected_date.strftime("%Y/%m/%d")
+    ]
+    return headers, filtered
+
+    
+    headers, filtered_records = get_filtered_projects(SPREADSHEET_KEY, sheet , selected_date)
+    st.subheader("該当する案件リスト")
+    if filtered_records:
+        for row in filtered_records:
+            st.markdown(f"""
+            **案件番号:** {row[0]}  
+            **日付:** {row[1]}  
+            **ゴルフ場:** {row[2]}  
+            **作業内容:** {row[3]}  
+            **名前:** {row[4]}
+            """)
+    else:
+        st.info("該当する案件は見つかりませんでした。")
