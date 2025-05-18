@@ -38,8 +38,8 @@ sheet = client.open_by_key(SPREADSHEET_KEY).worksheet(SHEET_NAME)
 data = sheet.get_all_values()
 
 # ヘッダーとデータの分離
-headers = data[1]  # 2行目をヘッダーとする
-records = data[2:]  # 3行目以降がデータ
+headers = data[2]  # 2行目をヘッダーとする
+records = data[3:]  # 3行目以降がデータ
 
 # ヘッダーのインデックス取得
 header_indices = {header: idx for idx, header in enumerate(headers)}
