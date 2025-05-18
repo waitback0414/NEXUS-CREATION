@@ -34,8 +34,8 @@ st.title("業務報告")
 client = get_gspread_client()
 sheet = client.open_by_key(SPREADSHEET_KEY).worksheet("予約一覧")
 data = sheet.get_all_values()
-headers = data[1]  # 2行目をヘッダーとする
-records = data[2:]  # 3行目以降がデータ
+headers = data[2]  # 3行目をヘッダーとする
+records = data[3:]  # 4行目以降がデータ
 
 # G列がログインユーザーの名前、K列が空白の行を抽出
 pending_rows = [row for row in records if row[6] == username and row[10] == ""]
