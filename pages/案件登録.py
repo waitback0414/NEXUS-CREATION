@@ -196,12 +196,3 @@ def main():
             st.session_state.current_page += 1
 
     st.markdown(f"**📄 ページ {st.session_state.current_page} / {total_pages}**")
-
-    
-    # 選択結果の表示
-    st.markdown("### ✅ 選択された案件")
-    selected_df = df[[selected for selected in st.session_state.selected_rows]]
-    st.dataframe(selected_df)
-
-if __name__ == "__main__":
-    main()
