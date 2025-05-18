@@ -145,26 +145,26 @@ def main():
 # データの取得
 df = pd.DataFrame(records, columns=headers)
 
-# ページネーションの設定
-items_per_page = 60
-total_items = len(df)
-total_pages = (total_items - 1) // items_per_page + 1
+# # ページネーションの設定
+# items_per_page = 60
+# total_items = len(df)
+# total_pages = (total_items - 1) // items_per_page + 1
 
-if "current_page" not in st.session_state:
-    st.session_state.current_page = 1
+# if "current_page" not in st.session_state:
+#     st.session_state.current_page = 1
 
-# ページ切り替えボタン
-col1, col2, col3 = st.columns([1, 2, 1])
-with col1:
-    if st.button("⬅️ 前へ") and st.session_state.current_page > 1:
-        st.session_state.current_page -= 1
-with col3:
-    if st.button("次へ ➡️") and st.session_state.current_page < total_pages:
-        st.session_state.current_page += 1
+# # ページ切り替えボタン
+# col1, col2, col3 = st.columns([1, 2, 1])
+# with col1:
+#     if st.button("⬅️ 前へ") and st.session_state.current_page > 1:
+#         st.session_state.current_page -= 1
+# with col3:
+#     if st.button("次へ ➡️") and st.session_state.current_page < total_pages:
+#         st.session_state.current_page += 1
 
-start_idx = (st.session_state.current_page - 1) * items_per_page
-end_idx = min(start_idx + items_per_page, total_items)
-current_df = df.iloc[start_idx:end_idx]
+# start_idx = (st.session_state.current_page - 1) * items_per_page
+# end_idx = min(start_idx + items_per_page, total_items)
+# current_df = df.iloc[start_idx:end_idx]
 
 # スタイルの適用
 styled_df = current_df.style.set_table_styles([
@@ -208,21 +208,21 @@ st.table(styled_df)
     # for i, h in enumerate(df.columns):
     #     cols[i+1].markdown(f"**{h}**")
 
-    # 表データ + チェックボックス
-    for idx, row in current_df.iterrows():
-        cols = st.columns(len(df.columns) + 1)
-        st.session_state.selected_rows[idx] = cols[0].checkbox(
-            "", value=st.session_state.selected_rows[idx], key=f"cb_{idx}"
-        )
-        for j, val in enumerate(row):
-            cols[j+1].write(val)
+    # # 表データ + チェックボックス
+    # for idx, row in current_df.iterrows():
+    #     cols = st.columns(len(df.columns) + 1)
+    #     st.session_state.selected_rows[idx] = cols[0].checkbox(
+    #         "", value=st.session_state.selected_rows[idx], key=f"cb_{idx}"
+    #     )
+    #     for j, val in enumerate(row):
+    #         cols[j+1].write(val)
 
-    st.markdown(f"**📄 ページ {st.session_state.current_page} / {total_pages}**")
+    # st.markdown(f"**📄 ページ {st.session_state.current_page} / {total_pages}**")
 
-    # 選択結果の表示
-    st.markdown("### ✅ 選択された案件")
-    selected_df = df[[selected for selected in st.session_state.selected_rows]]
-    st.dataframe(selected_df)
+    # # 選択結果の表示
+    # st.markdown("### ✅ 選択された案件")
+    # selected_df = df[[selected for selected in st.session_state.selected_rows]]
+    # st.dataframe(selected_df)
 
 if __name__ == "__main__":
     main()
