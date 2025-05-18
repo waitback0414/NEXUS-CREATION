@@ -113,12 +113,12 @@ def main():
     SHEET_NAME = "案件登録"
 
     headers, records = get_project_list(SPREADSHEET_KEY, SHEET_NAME)
-    df = pd.DataFrame(records, columns=headers)
-
+    data = records  # 'data' を定義
     headers = data[1]  # 2行目をヘッダーとする
     records = data[2:]  # 3行目以降がデータ
+    df = pd.DataFrame(records, columns=headers)
 
-
+    # 以下、df を使用して処理を続けます
     df = get_project_list(SPREADSHEET_KEY, SHEET_NAME)
 
     # ページネーション設定
