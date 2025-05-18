@@ -16,6 +16,7 @@ def get_gspread_client():
 
 # スプレッドシートのキー
 SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
+SHEET_NAME =  "予約一覧"
 
 # ログインユーザーの情報（セッションステートから取得）
 # # ユーザー名の取得（ログイン時にセッションステートに保存されていると仮定）
