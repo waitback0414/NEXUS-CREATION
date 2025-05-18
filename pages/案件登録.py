@@ -115,26 +115,26 @@ with st.form("案件登録フォーム"):
         
         st.success("案件が登録されました。")
 
-def get_filtered_projects(spreadsheet_key, sheet_name, selected_date):
-    client = get_gspread_client()
-    sheet = client.open_by_key(spreadsheet_key).worksheet(sheet_name)
-    data = sheet.get_all_values()
+# def get_filtered_projects(spreadsheet_key, sheet_name, selected_date):
+#     client = get_gspread_client()
+#     sheet = client.open_by_key(spreadsheet_key).worksheet(sheet_name)
+#     data = sheet.get_all_values()
 
-    # データが3行未満（ヘッダー + データが無い）場合のガード
-    if len(data) < 3:
-        return ["案件番号", "日付", "ゴルフ場", "作業内容", "名前"], []
+#     # データが3行未満（ヘッダー + データが無い）場合のガード
+#     if len(data) < 3:
+#         return ["案件番号", "日付", "ゴルフ場", "作業内容", "名前"], []
 
-    # ヘッダーを固定（信頼性を高める）
-    headers = ["案件番号", "日付", "ゴルフ場", "作業内容", "名前"]
-    records = data[2:]  # 3行目以降がデータ
+#     # ヘッダーを固定（信頼性を高める）
+#     headers = ["案件番号", "日付", "ゴルフ場", "作業内容", "名前"]
+#     records = data[2:]  # 3行目以降がデータ
 
-    # 日付でフィルター
-    filtered = [
-        row for row in records
-        if len(row) > 1 and row[1] == selected_date.strftime("%Y/%m/%d")
-    ]
+#     # 日付でフィルター
+#     filtered = [
+#         row for row in records
+#         if len(row) > 1 and row[1] == selected_date.strftime("%Y/%m/%d")
+#     ]
 
-    return headers, filtered
+#     return headers, filtered
 
 
 # 使用部分（インデント注意）
@@ -155,7 +155,7 @@ def get_filtered_projects(spreadsheet_key, sheet_name, selected_date):
 
 
 
-st.write("取得した headers:", headers)
+# st.write("取得した headers:", headers)
 
 # >>>>>>
 
