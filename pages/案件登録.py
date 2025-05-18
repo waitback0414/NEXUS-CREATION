@@ -114,7 +114,7 @@ with st.form("案件登録フォーム"):
         
         st.success("案件が登録されました。")
         
-def get_filtered_projects(spreadsheet_key, sheet_name, selected_date):
+def get_filtered_projects(spreadsheet_key, sheet , selected_date):
     client = get_gspread_client()
     sheet = client.open_by_key(spreadsheet_key).worksheet(sheet_name)
     data = sheet.get_all_values()
