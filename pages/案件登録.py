@@ -149,7 +149,7 @@ def get_filtered_projects(spreadsheet_key, sheet_name, selected_date):
 
 # filtered_records: [["240001", "2025/05/18", "ABC", "キャディー", "山田太郎"], ...]
 headers = ["案件番号", "日付", "ゴルフ場", "作業内容", "名前"]
-df = pd.DataFrame(filtered_records, columns=headers)
+df = pd.DataFrame(filtered_projects, columns=headers)
 
 # チェックボックスを表示するための列を作成
 if "delete_flags" not in st.session_state or len(st.session_state.delete_flags) != len(df):
