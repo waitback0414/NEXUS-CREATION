@@ -128,8 +128,9 @@ def get_filtered_projects(spreadsheet_key, sheet_name, selected_date):
     return headers, filtered
 
     
-    headers, filtered_records = get_filtered_projects(SPREADSHEET_KEY, sheet , selected_date)
-    st.subheader("該当する案件リスト")
+    
+headers, filtered_records = get_filtered_projects(SPREADSHEET_KEY, sheet , selected_date)
+st.subheader("該当する案件リスト")
     if filtered_records:
         for row in filtered_records:
             st.markdown(f"""
