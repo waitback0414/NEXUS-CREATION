@@ -131,7 +131,7 @@ else:
                         sheet.update_cell(row_number, col_indices["K"] + 1, "報告済み")
 
                         st.success("日報が登録されました ✅")
-                        st.session_state[f"show_text_{key_suffix}"] = False
                         time.sleep(1)
+                        st.session_state[f"show_text_{key_suffix}"] = False
                         st.experimental_rerun()
 
