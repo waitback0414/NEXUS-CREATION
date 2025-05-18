@@ -39,7 +39,7 @@ def authenticate(user_id, password, login_data):
         if record.get("MAIL") == user_id and record.get("PASS") == password:
             st.session_state["role"] = record.get("AUTHORITY", "user")  # 権限を記録（なければ user）
             st.session_state["username"] = record.get("NAME", "")  # ユーザー名を記録
-            st.session_state["user_email"] = record.get("MAIL", "")  # ユーザー名を記録
+            st.session_state["user_email"] = record.get("MAIL", "")  # emailを記録
             return True
     return False
 
@@ -73,7 +73,6 @@ def main():
                 st.error(f"ログインエラー: {e}")
     else:
         st.success("ログイン済みです。")
-        st.write("✅ ここにスプレッドシートの閲覧・編集機能を実装できます。")
 
         if st.button("ログアウト"):
             st.session_state.logged_in = False
@@ -84,42 +83,3 @@ if __name__ == "__main__":
     main()
 
 
-# アプリ本体
-# def main():
-#     st.title("ログインフォーム")
-
-#     if "logged_in" not in st.session_state:
-#         st.session_state.logged_in = False
-
-#     if not st.session_state.logged_in:
-#         user_id = st.text_input("ログインID（メール）")
-#         password = st.text_input("パスワード", type="password")
-
-#         if st.button("ログイン"):
-#             try:
-#                 login_data = get_login_data()
-#                 if authenticate(user_id, password, login_data):
-#                     st.session_state.logged_in = True
-#                     st.success("ログイン成功！")
-#                     time.sleep(1)  # 成功メッセージを表示するための待機
-#                     # ユーザーの権限に応じてリダイレクト
-#                     role = st.session_state.get("role", "user")
-#                     if role == "admin":
-#                         st.switch_page("pages/案件登録.py")
-#                     else:
-#                         st.switch_page("pages/業務報告.py")
-#                 else:
-#                     st.error("ログインID または パスワードが間違っています。")
-#             except Exception as e:
-#                 st.error(f"ログインエラー: {e}")
-#     else:
-#         st.success("ログイン済みです。")
-#         st.write("✅ ここにスプレッドシートの閲覧・編集機能を実装できます。")
-
-#         if st.button("ログアウト"):
-#             st.session_state.logged_in = False
-#             st.session_state.role = "user"
-#             st.session_state.pop("username", None)  # ユーザー名を削除
-
-# if __name__ == "__main__":
-#     main()
