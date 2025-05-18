@@ -196,3 +196,6 @@ def main():
             st.session_state.current_page += 1
 
     st.markdown(f"**📄 ページ {st.session_state.current_page} / {total_pages}**")
+    
+if __name__ == "__main__":
+    main()
