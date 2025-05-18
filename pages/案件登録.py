@@ -106,34 +106,6 @@ with st.form("案件登録フォーム"):
         
         st.success("案件が登録されました。")
 
-@st.cache_resource
-def get_gspread_client():
-    credentials = Credentials.from_service_account_info(
-        st.secrets["gcp_service_account"],
-        scopes=SCOPES
-    )
-    return gspread.authorize(credentials)
-
-def get_project_list(spreadsheet_key, sheet_name):
-    client = get_gspread_client()
-    sheet = client.open_by_key(spreadsheet_key).worksheet(sheet_name)
-    data = sheet.get_all_values()
-    headers = data[1]  # 2行目をヘッダーとする
-    records = data[2:]  # 3行目以降がデータ
-
-    # 案件ID（A列）で降順ソート
-    valid_records = []
-    for row in records:
-        try:
-            valid_records.append((int(row[0]), row))
-        except:
-            continue
-    valid_records.sort(key=lambda x: x[0], reverse=True)
-    sorted_records = [r for _, r in valid_records]
-
-    df = pd.DataFrame(sorted_records, columns=headers)
-    return df
-
 def main():
     st.title("案件一覧")
 
