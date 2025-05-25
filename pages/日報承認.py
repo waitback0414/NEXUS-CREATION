@@ -82,16 +82,33 @@ def main():
 
     st.subheader("📋 承認対象一覧")
 
+    # for i, row in df.reset_index(drop=True).iterrows():
+    #     unique_key = f"{row['ID']}_{i}"  # ID + index をキーに
+    #     cols = st.columns([0.05, 0.7, 0.25])
+    #     st.session_state.approval_flags[i] = cols[0].checkbox("", key=f"chk_{unique_key}")
+    #     cols[1].markdown(
+    #         f"**ID:** {row['ID']}｜**登録日:** {row['登録日'].strftime('%Y/%m/%d')}｜"
+    #         f"**報告者:** {row['報告者']}｜**報告:** {row['報告']}"
+    #     )
+    #     st.session_state.reject_comments[i] = cols[2].text_input("却下コメント", value=st.session_state.reject_comments[i], key=f"comment_{unique_key}")
+    
     for i, row in df.reset_index(drop=True).iterrows():
-        unique_key = f"{row['ID']}_{i}"  # ID + index をキーに
-        cols = st.columns([0.05, 0.7, 0.25])
-        st.session_state.approval_flags[i] = cols[0].checkbox("", key=f"chk_{unique_key}")
-        cols[1].markdown(
-            f"**ID:** {row['ID']}｜**登録日:** {row['登録日'].strftime('%Y/%m/%d')}｜"
-            f"**報告者:** {row['報告者']}｜**報告:** {row['報告']}"
-        )
-        st.session_state.reject_comments[i] = cols[2].text_input("却下コメント", value=st.session_state.reject_comments[i], key=f"comment_{unique_key}")
+    unique_key = f"{row['ID']}_{i}"
+    cols = st.columns([0.05, 0.7, 0.25])
+    st.session_state.approval_flags[i] = cols[0].checkbox("", key=f"chk_{unique_key}")
+    
+    date_str = row["登録日"].strftime("%Y/%m/%d") if pd.notnull(row["登録日"]) else "未登録"
+    
+    cols[1].markdown(
+        f"**ID:** {row['ID']}｜**登録日:** {date_str}｜"
+        f"**登録者:** {row['登録者']}｜**報告:** {row['報告']}"
+    )
+    
+    st.session_state.reject_comments[i] = cols[2].text_input(
+        "却下コメント", value=st.session_state.reject_comments[i], key=f"comment_{unique_key}"
+    )
 
+    
     col1, col2 = st.columns(2)
 
     with col1:
