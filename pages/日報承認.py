@@ -36,13 +36,19 @@ def load_pending_approvals(spreadsheet_key, sheet_name):
     df = df[df[status_col].fillna("") != "承認"]
 
     # 日付ソート（B列 = 日付）
-    try:
-        df["日付"] = pd.to_datetime(df["日付"], errors="coerce")
-        df = df.sort_values("日付", ascending=False)
-    except:
-        pass
 
-    return df.reset_index(drop=True), sheet, status_col
+
+    # try:
+    #     df["日付"] = pd.to_datetime(df["日付"], errors="coerce")
+    #     df = df.sort_values("日付", ascending=False)
+    # except:
+    #     pass
+
+    # return df.reset_index(drop=True), sheet, status_col
+
+
+
+
 
 df, sheet = fetch_pending_reports()
 # ① データ取得後にヘッダー確認
