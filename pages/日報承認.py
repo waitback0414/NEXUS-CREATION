@@ -94,7 +94,7 @@ with col_a:
                 row_num = i + 3  # 実際の行番号（ヘッダー分オフセット）
                 sheet.update_cell(row_num, 20, "承認")  # T列 → index=19 + 1
         st.success("承認を完了しました。")
-        st.experimental_rerun()
+        st.rerun()
 
 with col_b:
     if st.button("❌ 却下する"):
