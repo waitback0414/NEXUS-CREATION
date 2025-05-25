@@ -47,6 +47,31 @@ def load_pending_approvals(spreadsheet_key, sheet_name):
     # return df.reset_index(drop=True), sheet, status_col
 
 
+def fetch_pending_reports():
+    client = get_gspread_client()
+    sheet = client.open_by_key(SPREADSHEET_KEY).worksheet(SHEET_NAME)
+    data = sheet.get_all_values()
+
+    if len(data) < 4:
+        return pd.DataFrame(), sheet
+
+    headers = data[2]  # 3行目がヘッダー
+    records = data[3:]  # 4行目以降がデータ
+
+    df = pd.DataFrame(records, columns=headers)
+    df["行番号"] = range(4, 4 + len(df))  # 実際の行番号を記録
+
+    # T列（インデックス19）が "承認" でないものを対象
+    if len(df.columns) > 19:
+        status_col = df.columns[19]
+        df = df[df[status_col].fillna("") != "承認"]
+
+    # 登録日を日付型に変換（例：列名が"登録日"の場合）
+    if "登録日" in df.columns:
+        df["登録日"] = pd.to_datetime(df["登録日"], errors="coerce")
+        df = df.sort_values("登録日", ascending=False)
+
+    return df, sheet
 
 
 
