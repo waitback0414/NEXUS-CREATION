@@ -20,6 +20,23 @@ def get_gspread_client():
     )
     return gspread.authorize(credentials)
 
+# ===== フィルターエリア =====
+st.sidebar.header("🔎 フィルター")
+date_filter = st.sidebar.date_input("登録日で絞り込み", value=None)
+users = sorted(df["報告者"].dropna().unique())
+user_filter = st.sidebar.selectbox("報告者で絞り込み", ["すべて"] + users)
+
+if date_filter:
+        df = df[df["登録日"].dt.date == date_filter]
+if user_filter != "すべて":
+        df = df[df["報告者"] == user_filter]
+
+if df.empty:
+    st.info("絞り込み結果に一致する日報はありません。")
+        return
+
+
+
 # ====== データ取得関数 ======
 def fetch_pending_reports():
     client = get_gspread_client()
@@ -61,20 +78,20 @@ def main():
         st.info("未承認の日報はありません。")
         return
 
-    # ===== フィルターエリア =====
-    st.sidebar.header("🔎 フィルター")
-    date_filter = st.sidebar.date_input("登録日で絞り込み", value=None)
-    users = sorted(df["報告者"].dropna().unique())
-    user_filter = st.sidebar.selectbox("報告者で絞り込み", ["すべて"] + users)
+    # # ===== フィルターエリア =====
+    # st.sidebar.header("🔎 フィルター")
+    # date_filter = st.sidebar.date_input("登録日で絞り込み", value=None)
+    # users = sorted(df["報告者"].dropna().unique())
+    # user_filter = st.sidebar.selectbox("報告者で絞り込み", ["すべて"] + users)
 
-    if date_filter:
-        df = df[df["登録日"].dt.date == date_filter]
-    if user_filter != "すべて":
-        df = df[df["報告者"] == user_filter]
+    # if date_filter:
+    #     df = df[df["登録日"].dt.date == date_filter]
+    # if user_filter != "すべて":
+    #     df = df[df["報告者"] == user_filter]
 
-    if df.empty:
-        st.info("絞り込み結果に一致する日報はありません。")
-        return
+    # if df.empty:
+    #     st.info("絞り込み結果に一致する日報はありません。")
+    #     return
 
     # ===== セッション状態初期化 =====
     if "approval_flags" not in st.session_state or len(st.session_state.approval_flags) != len(df):
