@@ -62,7 +62,7 @@ if not filtered_records:
     st.info("未報告の予約はありません。")
 else:
     for idx, row in enumerate(filtered_records):
-        with st.expander(f"予約 {idx + 1}"):
+        with st.expander(f"案件 {idx + 1}"):
             # 構造化して予約情報を表示
             st.markdown(f"""
             <div style='
