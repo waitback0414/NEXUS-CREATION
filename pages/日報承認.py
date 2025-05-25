@@ -170,7 +170,7 @@ def load_pending_approvals(spreadsheet_key, sheet_name):
     df["行番号"] = range(4, 4 + len(df))  # 実際のスプレッドシートの行番号を記録
 
     # T列が承認済みでないもののみフィルター（列名を確認して正確に）
-    status_col = "承認状態" if "承認状態" in df.columns else df.columns[19]  # T列
+    status_col = "承認" if "承認" in df.columns else df.columns[19]  # T列
     df = df[df[status_col] != "承認"]
 
     # 日付列で並び替え（B列 = 日付）
