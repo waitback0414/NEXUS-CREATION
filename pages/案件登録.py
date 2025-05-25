@@ -4,6 +4,58 @@ from google.oauth2.service_account import Credentials
 import datetime
 import pandas as pd
 
+
+
+import streamlit as st
+
+# ページ設定（スマホ表示を意識して centered に）
+st.set_page_config(page_title="案件登録", layout="centered")
+
+# カスタムCSS
+st.markdown("""
+    <style>
+    /* 全体のフォントとサイズ調整 */
+    html, body, [class*="css"]  {
+        font-family: 'Arial', sans-serif;
+        font-size: 16px;
+    }
+
+    /* 入力フォーム、ボタンなどを画面幅にフィットさせる */
+    input, textarea, select {
+        width: 100% !important;
+        font-size: 16px !important;
+    }
+
+    /* Streamlitのボタンを横幅いっぱいに広げる */
+    button[kind="primary"] {
+        width: 100% !important;
+        font-size: 16px !important;
+    }
+
+    /* テーブルのスタイルをスマホ対応に */
+    .dataframe {
+        width: 100% !important;
+        overflow-x: auto;
+        font-size: 14px;
+    }
+
+    /* チェックボックスのラベルも読みやすく */
+    label[data-baseweb="checkbox"] > div {
+        font-size: 16px;
+    }
+
+    /* モバイルでのパディング調整 */
+    .block-container {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+
+
 if st.session_state.get("role") != "admin":
     st.warning("このページは管理者専用です。")
     st.stop()
