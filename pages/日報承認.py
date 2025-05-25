@@ -37,7 +37,7 @@ def fetch_pending_reports():
     df = pd.DataFrame(records, columns=headers)
     
     # 必要な列だけ抜粋 & T列（"承認"）が空欄の行のみ
-    cols_to_display = ["ID", "報告内容", "登録者", "作業内容", "業務状況", "ラウンド数", "報告事項", "登録日", "ゴルフ場"]
+    cols_to_display = ["ID", "登録日", "登録者", "ゴルフ場", "業務", "報告", "ラウンド数", "チェック", "エラー箇所"]
     column_indices = [0, 10, 11, 13, 14, 15, 16, 18, 20]
     
     filtered = [row for row in records if len(row) > 19 and row[19].strip() != "承認"]
