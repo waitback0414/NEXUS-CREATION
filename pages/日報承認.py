@@ -64,8 +64,8 @@ def main():
     # ===== フィルターエリア =====
     st.sidebar.header("🔎 フィルター")
     date_filter = st.sidebar.date_input("登録日で絞り込み", value=None)
-    users = sorted(df["登録者"].dropna().unique())
-    user_filter = st.sidebar.selectbox("登録者で絞り込み", ["すべて"] + users)
+    users = sorted(df["報告者"].dropna().unique())
+    user_filter = st.sidebar.selectbox("報告者で絞り込み", ["すべて"] + users)
 
     if date_filter:
         df = df[df["登録日"].dt.date == date_filter]
