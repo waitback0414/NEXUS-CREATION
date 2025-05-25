@@ -204,11 +204,12 @@ def main():
         st.info("未承認の日報はありません。")
         return
 
-    # フラグの初期化
-    if "approval_flags" not in st.session_state or len(st.session_state.approval_flags) != len(df):
-        st.session_state.approval_flags = [False] * len(df)
 
     st.subheader("承認待ち一覧")
+
+# フラグの初期化
+    if "approval_flags" not in st.session_state or len(st.session_state.approval_flags) != len(df):
+        st.session_state.approval_flags = [False] * len(df)
 
     for i, row in df.reset_index(drop=True).iterrows():
         unique_key = f"chk_{row['案件番号']}_{i}"
