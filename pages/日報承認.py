@@ -85,14 +85,18 @@ for i, row in df.iterrows():
         """
     )
 
-# ボタンで処理
-col_a, col_b = st.columns(2)
+# スプレッドシートの全データ（4行目以降）を取得
+all_data = sheet.get_all_values()[3:]  # データは4行目〜
+
 with col_a:
     if st.button("✅ 承認する"):
         for i, flag in enumerate(st.session_state.approval_flags):
             if flag:
-                row_num = i + 3  # 実際の行番号（ヘッダー分オフセット）
-                sheet.update_cell(row_num, 20, "承認")  # T列 → index=19 + 1
+                target_id = df.iloc[i, 0]  # A列（予約番号）
+                for idx, row in enumerate(all_data):
+                    if len(row) > 0 and row[0] == target_id:
+                        sheet.update_cell(idx + 4, 20, "承認")  # T列 = 20列目
+                        break
         st.success("承認を完了しました。")
         st.rerun()
 
@@ -100,8 +104,12 @@ with col_b:
     if st.button("❌ 却下する"):
         for i, flag in enumerate(st.session_state.approval_flags):
             if flag:
-                row_num = i + 3
-                sheet.update_cell(row_num, 20, "却下")
+                target_id = df.iloc[i, 0]
+                for idx, row in enumerate(all_data):
+                    if len(row) > 0 and row[0] == target_id:
+                        sheet.update_cell(idx + 4, 20, "却下")
+                        break
         st.warning("却下を完了しました。")
         st.rerun()
+
 
