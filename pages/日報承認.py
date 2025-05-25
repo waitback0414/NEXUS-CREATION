@@ -58,13 +58,13 @@ def main():
     # ===== フィルター =====
     st.sidebar.header("🔎 フィルター")
     date_filter = st.sidebar.date_input("登録日で絞り込み", value=None)
-    users = sorted(df["登録者"].dropna().unique())
-    user_filter = st.sidebar.selectbox("登録者で絞り込み", ["すべて"] + users)
+    users = sorted(df["報告者"].dropna().unique())
+    user_filter = st.sidebar.selectbox("報告者で絞り込み", ["すべて"] + users)
 
     if date_filter:
         df = df[df["登録日"].dt.date == date_filter]
     if user_filter != "すべて":
-        df = df[df["登録者"] == user_filter]
+        df = df[df["報告者"] == user_filter]
 
     if df.empty:
         st.info("絞り込み結果に一致する日報はありません。")
@@ -85,7 +85,7 @@ def main():
         date_str = row["登録日"].strftime("%Y/%m/%d") if pd.notnull(row["登録日"]) else "未登録"
         cols[1].markdown(
             f"**ID:** {row['ID']}｜**登録日:** {date_str}｜"
-            f"**登録者:** {row['登録者']}｜**報告:** {row['報告']}"
+            f"**報告者:** {row['報告者']}｜**報告:** {row['報告']}"
         )
         st.session_state.reject_comments[i] = cols[2].text_input(
             "却下コメント", value=st.session_state.reject_comments[i], key=f"comment_{unique_key}"
