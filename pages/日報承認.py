@@ -85,32 +85,75 @@ for i, row in df.iterrows():
         """
     )
 
-# スプレッドシートの全データ（4行目以降）を取得
-all_data = sheet.get_all_values()[3:]  # データは4行目〜
-col_a, col_b = st.columns(2)
+# ✅ 初期化
+df, sheet = fetch_pending_reports()  # ← この関数で T列 != "承認" をフィルターしてる前提
+st.session_state.approval_flags = [False] * len(df)  # 行数に合わせてフラグ初期化
 
-with col_a:
+# ✅ 表示部分
+for i, row in df.iterrows():
+    cols = st.columns([0.05, 0.95])
+    st.session_state.approval_flags[i] = cols[0].checkbox(
+        "", value=st.session_state.approval_flags[i], key=f"chk_{i}"
+    )
+    cols[1].markdown(
+        f"**予約番号:** {row[0]}｜**登録者:** {row[2]}｜**登録日:** {row[7]}"
+    )
+
+# ✅ 全データ（ヘッダー除いた 4行目以降）取得して実行対象の行番号を特定
+all_data = sheet.get_all_values()[3:]
+
+# ✅ ボタン処理
+col1, col2 = st.columns(2)
+with col1:
     if st.button("✅ 承認する"):
         for i, flag in enumerate(st.session_state.approval_flags):
             if flag:
-                target_id = df.iloc[i, 0]  # A列（予約番号）
+                target_id = df.iloc[i, 0]
                 for idx, row in enumerate(all_data):
-                    if len(row) > 0 and row[0] == target_id:
-                        sheet.update_cell(idx + 4, 20, "承認")  # T列 = 20列目
+                    if row[0] == target_id:
+                        sheet.update_cell(idx + 4, 20, "承認")  # 4行目以降
                         break
         st.success("承認を完了しました。")
-        st.rerun()
+        st.rerun()  # ✅ ページを再読み込み → T列="承認" が除外されて消える
 
-with col_b:
+with col2:
     if st.button("❌ 却下する"):
         for i, flag in enumerate(st.session_state.approval_flags):
             if flag:
                 target_id = df.iloc[i, 0]
                 for idx, row in enumerate(all_data):
-                    if len(row) > 0 and row[0] == target_id:
+                    if row[0] == target_id:
                         sheet.update_cell(idx + 4, 20, "却下")
                         break
         st.warning("却下を完了しました。")
-        st.rerun()
+        st.rerun()  # ✅ 同様に再読み込み
+
+# # スプレッドシートの全データ（4行目以降）を取得
+# all_data = sheet.get_all_values()[3:]  # データは4行目〜
+# col_a, col_b = st.columns(2)
+
+# with col_a:
+#     if st.button("✅ 承認する"):
+#         for i, flag in enumerate(st.session_state.approval_flags):
+#             if flag:
+#                 target_id = df.iloc[i, 0]  # A列（予約番号）
+#                 for idx, row in enumerate(all_data):
+#                     if len(row) > 0 and row[0] == target_id:
+#                         sheet.update_cell(idx + 4, 20, "承認")  # T列 = 20列目
+#                         break
+#         st.success("承認を完了しました。")
+#         st.rerun()
+
+# with col_b:
+#     if st.button("❌ 却下する"):
+#         for i, flag in enumerate(st.session_state.approval_flags):
+#             if flag:
+#                 target_id = df.iloc[i, 0]
+#                 for idx, row in enumerate(all_data):
+#                     if len(row) > 0 and row[0] == target_id:
+#                         sheet.update_cell(idx + 4, 20, "却下")
+#                         break
+#         st.warning("却下を完了しました。")
+#         st.rerun()
 
 
