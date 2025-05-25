@@ -59,15 +59,15 @@ def main():
     st.sidebar.subheader("🔍 絞り込み条件")
 
     unique_dates = df["登録日"].dt.date.dropna().unique()
-    unique_users = df["登録者"].dropna().unique()
+    unique_users = df["報告者"].dropna().unique()
 
     selected_date = st.sidebar.selectbox("登録日で絞り込み", options=["全て"] + sorted(map(str, unique_dates)))
-    selected_user = st.sidebar.selectbox("登録者で絞り込み", options=["全て"] + sorted(unique_users))
+    selected_user = st.sidebar.selectbox("報告者で絞り込み", options=["全て"] + sorted(unique_users))
 
     if selected_date != "全て":
         df = df[df["登録日"].dt.date == datetime.strptime(selected_date, "%Y-%m-%d").date()]
     if selected_user != "全て":
-        df = df[df["登録者"] == selected_user]
+        df = df[df["報告者"] == selected_user]
 
     if df.empty:
         st.info("該当する未承認の日報はありません。")
@@ -88,7 +88,7 @@ def main():
         st.session_state.approval_flags[i] = cols[0].checkbox("", key=f"chk_{unique_key}")
         cols[1].markdown(
             f"**ID:** {row['ID']}｜**登録日:** {row['登録日'].strftime('%Y/%m/%d')}｜"
-            f"**登録者:** {row['登録者']}｜**報告:** {row['報告']}"
+            f"**報告者:** {row['報告者']}｜**報告:** {row['報告']}"
         )
         st.session_state.reject_comments[i] = cols[2].text_input("却下コメント", value=st.session_state.reject_comments[i], key=f"comment_{unique_key}")
 
