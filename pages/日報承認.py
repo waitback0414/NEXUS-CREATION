@@ -103,5 +103,5 @@ with col_b:
                 row_num = i + 3
                 sheet.update_cell(row_num, 20, "却下")
         st.warning("却下を完了しました。")
-        st.experimental_rerun()
+        st.rerun()
 
