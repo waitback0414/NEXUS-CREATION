@@ -36,9 +36,9 @@ def fetch_pending_reports():
     # 日付変換
     df["登録日"] = pd.to_datetime(df["登録日"], errors="coerce")
 
-    # 承認列フィルター（T列 = index 19）
     if "承認" in df.columns:
-        df = df[df["承認"].fillna("") != "承認"]
+        df = df[~df["承認"].fillna("").isin(["承認", "却下"])]
+
 
     return df, sheet
 
