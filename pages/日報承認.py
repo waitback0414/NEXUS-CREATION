@@ -79,7 +79,7 @@ for i, row in df.iterrows():
     st.session_state.approval_flags[i] = cols[0].checkbox("", value=st.session_state.approval_flags[i], key=f"chk_{i}")
     cols[1].markdown(
         f"""
-        **予約番号:** {row[0]}｜**登録日:** {row[7]}｜**登録者:** {row[2]}  
+        **ID:** {row[0]}｜**登録日:** {row[1]}｜**登録者:** {row[2]}  
         **ゴルフ場:** {row[8]}｜**作業内容:** {row[3]}｜**業務状況:** {row[4]}  
         **ラウンド数:** {row[5]}｜**報告事項:** {row[6]}
         """
