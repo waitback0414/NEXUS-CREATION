@@ -118,10 +118,19 @@ def main():
                 if flag:
                     row_num = df.iloc[i]["行番号"]
                     comment = st.session_state.reject_comments[i]
-                    sheet.update_cell(int(row_num), 20, "却下")
-                    sheet.update_cell(int(row_num), 36, comment)  # U列に却下理由
+    
+                    # 空文字対策（任意）
+                    if not comment.strip():
+                        st.warning(f"{df.iloc[i]['ID']} の却下コメントが空です。")
+                        continue
+    
+                    # スプレッドシート更新
+                    sheet.update_cell(int(row_num), 20, "却下")  # T列
+                    sheet.update_cell(int(row_num), 36, comment)  # AJ列（36列目）
+    
             st.warning("却下が完了しました。")
             st.rerun()
+
 
 if __name__ == "__main__":
     main()
