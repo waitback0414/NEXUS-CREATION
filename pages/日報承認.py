@@ -169,9 +169,15 @@ def load_pending_approvals(spreadsheet_key, sheet_name):
     df = pd.DataFrame(records, columns=headers)
     df["行番号"] = range(4, 4 + len(df))  # 実際のスプレッドシートの行番号を記録
 
-    # T列が承認済みでないもののみフィルター（列名を確認して正確に）
-    status_col = "承認" if "承認" in df.columns else df.columns[19]  # T列
-    df = df[df[status_col] != "承認"]
+
+    df = df[df["承認"] != "承認"]  # T列（インデックス=19）の列名に応じて修正
+    df, sheet = fetch_pending_reports()  # ← この関数で T列 != "承認" をフィルターしてる前提
+    st.session_state.approval_flags = [False] * len(df)  # 行数に合わせてフラグ初期化
+
+    
+    # # T列が承認済みでないもののみフィルター（列名を確認して正確に）
+    # status_col = "承認状態" if "承認状態" in df.columns else df.columns[19]  # T列
+    # df = df[df[status_col] != "承認"]
 
     # 日付列で並び替え（B列 = 日付）
     try:
