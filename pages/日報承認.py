@@ -86,6 +86,10 @@ for i, row in df.iterrows():
     )
 
 # ✅ 初期化
+data = sheet.get_all_values()
+headers = data[2]      # 3行目をヘッダー
+records = data[3:]     # 4行目以降をデータ
+df = pd.DataFrame(records, columns=headers)
 df = df[df["承認"] != "承認"]  # T列（インデックス=19）の列名に応じて修正
 df, sheet = fetch_pending_reports()  # ← この関数で T列 != "承認" をフィルターしてる前提
 st.session_state.approval_flags = [False] * len(df)  # 行数に合わせてフラグ初期化
