@@ -31,8 +31,8 @@ def fetch_pending_reports():
     if len(data) < 3:
         return pd.DataFrame(), sheet
 
-    headers = data[1]
-    records = data[2:]
+    headers = data[2]
+    records = data[3:]
 
     df = pd.DataFrame(records, columns=headers)
     
