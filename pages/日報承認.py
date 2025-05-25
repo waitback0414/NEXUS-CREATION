@@ -146,12 +146,16 @@ SCOPES = [
     "https://www.googleapis.com/auth/drive"
 ]
 
+SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
+SHEET_NAME = "予約一覧"
+
 @st.cache_resource
 def get_gspread_client():
     credentials = Credentials.from_service_account_info(
         st.secrets["gcp_service_account"], scopes=SCOPES
     )
     return gspread.authorize(credentials)
+
 
 # ====== データ取得関数 ======
 def load_pending_approvals(spreadsheet_key, sheet_name):
