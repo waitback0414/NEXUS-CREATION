@@ -44,6 +44,7 @@ def load_pending_approvals(spreadsheet_key, sheet_name):
 
     return df.reset_index(drop=True), sheet, status_col
 
+df, sheet = fetch_pending_reports()
 # ① データ取得後にヘッダー確認
 st.write("取得ヘッダー:", df.columns.tolist())
 
