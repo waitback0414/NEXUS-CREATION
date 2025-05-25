@@ -37,14 +37,14 @@ def fetch_pending_reports():
     df = pd.DataFrame(records, columns=headers)
     
     # 必要な列だけ抜粋 & T列（"承認"）が空欄の行のみ
-    cols_to_display = ["予約番号", "報告内容", "登録者", "作業内容", "業務状況", "ラウンド数", "報告事項", "登録日", "ゴルフ場"]
+    cols_to_display = ["ID", "報告内容", "登録者", "作業内容", "業務状況", "ラウンド数", "報告事項", "登録日", "ゴルフ場"]
     column_indices = [0, 10, 11, 13, 14, 15, 16, 18, 20]
     
     filtered = [row for row in records if len(row) > 19 and row[19].strip() != "承認"]
     df_filtered = pd.DataFrame(filtered, columns=headers).iloc[:, column_indices]
 
     # 日付ソート（登録日列が18列目→index=17）
-    df_filtered["登録日"] = pd.to_datetime(df_filtered["登録日"], errors='coerce')
+    df_filtered["報告済み"] = pd.to_datetime(df_filtered["登録日"], errors='coerce')
     df_filtered = df_filtered.sort_values(by="登録日", ascending=False).reset_index(drop=True)
 
     return df_filtered, sheet
