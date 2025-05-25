@@ -87,6 +87,7 @@ for i, row in df.iterrows():
 
 # スプレッドシートの全データ（4行目以降）を取得
 all_data = sheet.get_all_values()[3:]  # データは4行目〜
+col_a, col_b = st.columns(2)
 
 with col_a:
     if st.button("✅ 承認する"):
