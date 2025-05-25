@@ -69,6 +69,9 @@ if "approval_flags" not in st.session_state or len(st.session_state.approval_fla
 
 st.write("以下は未承認の日報一覧です：")
 
+df, sheet = fetch_pending_reports()
+st.session_state.approval_flags = [False] * len(df)  # ← ここで確実に初期化
+
 
 # 表 + チェックボックス表示
 for i, row in df.iterrows():
