@@ -20,22 +20,6 @@ def get_gspread_client():
     )
     return gspread.authorize(credentials)
 
-# ===== フィルターエリア =====
-st.sidebar.header("🔎 フィルター")
-date_filter = st.sidebar.date_input("登録日で絞り込み", value=None)
-users = sorted(df["報告者"].dropna().unique())
-user_filter = st.sidebar.selectbox("報告者で絞り込み", ["すべて"] + users)
-
-if date_filter:
-        df = df[df["登録日"].dt.date == date_filter]
-if user_filter != "すべて":
-        df = df[df["報告者"] == user_filter]
-
-if df.empty:
-    st.info("絞り込み結果に一致する日報はありません。")
-        return
-
-
 
 # ====== データ取得関数 ======
 def fetch_pending_reports():
@@ -63,6 +47,21 @@ def fetch_pending_reports():
     df = df.sort_values("登録日", ascending=False)
 
     return df, sheet
+
+# ===== フィルターエリア =====
+st.sidebar.header("🔎 フィルター")
+date_filter = st.sidebar.date_input("登録日で絞り込み", value=None)
+users = sorted(df["報告者"].dropna().unique())
+user_filter = st.sidebar.selectbox("報告者で絞り込み", ["すべて"] + users)
+
+if date_filter:
+        df = df[df["登録日"].dt.date == date_filter]
+if user_filter != "すべて":
+        df = df[df["報告者"] == user_filter]
+
+if df.empty:
+    st.info("絞り込み結果に一致する日報はありません。")
+        return
 
 # ====== UIと処理 ======
 def main():
