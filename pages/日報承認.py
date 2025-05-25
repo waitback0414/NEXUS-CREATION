@@ -119,7 +119,7 @@ def main():
                     row_num = df.iloc[i]["行番号"]
                     comment = st.session_state.reject_comments[i]
                     sheet.update_cell(int(row_num), 20, "却下")
-                    sheet.update_cell(int(row_num), 21, comment)  # U列に却下理由
+                    sheet.update_cell(int(row_num), 36, comment)  # U列に却下理由
             st.warning("却下が完了しました。")
             st.rerun()
 
