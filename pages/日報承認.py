@@ -69,6 +69,13 @@ if "approval_flags" not in st.session_state or len(st.session_state.approval_fla
 
 st.write("以下は未承認の日報一覧です：")
 
+
+for i, row in df.iterrows():
+    cols = st.columns([0.05, 0.95])
+    st.session_state.approval_flags[i] = cols[0].checkbox(
+        "", value=st.session_state.approval_flags[i], key=f"chk_{i}"
+    )
+
 # 表 + チェックボックス表示
 for i, row in df.iterrows():
     cols = st.columns([0.05, 0.95])
