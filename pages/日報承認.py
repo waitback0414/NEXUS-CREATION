@@ -45,7 +45,7 @@ def load_pending_approvals(spreadsheet_key, sheet_name):
     return df.reset_index(drop=True), sheet, status_col
 
 # ① データ取得後にヘッダー確認
-st.write("取得ヘッダー:", headers)
+st.write("取得ヘッダー:", df.columns.tolist())
 
 # ② 承認列の存在確認
 if "承認" not in df.columns:
