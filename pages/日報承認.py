@@ -1,3 +1,102 @@
+import streamlit as st
+import gspread
+import pandas as pd
+from google.oauth2.service_account import Credentials
+from datetime import datetime
+
+# ====== 認証とクライアント取得 ======
+SCOPES = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive"
+]
+SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
+SHEET_NAME = "予約一覧"
+
+@st.cache_resource
+def get_gspread_client():
+    credentials = Credentials.from_service_account_info(
+        st.secrets["gcp_service_account"], scopes=SCOPES
+    )
+    return gspread.authorize(credentials)
+
+# ====== データ取得関数 ======
+def load_pending_approvals(spreadsheet_key, sheet_name):
+    client = get_gspread_client()
+    sheet = client.open_by_key(spreadsheet_key).worksheet(sheet_name)
+    data = sheet.get_all_values()
+
+    headers = data[2]  # 3行目がヘッダー
+    records = data[3:]  # 4行目以降がデータ
+
+    df = pd.DataFrame(records, columns=headers)
+    df["行番号"] = range(4, 4 + len(df))  # 実際のスプレッドシートの行番号を記録
+
+    # T列（index 19）でフィルター
+    status_col = df.columns[19]  # T列（index = 19）
+    df = df[df[status_col].fillna("") != "承認"]
+
+    # 日付ソート（B列 = 日付）
+    try:
+        df["日付"] = pd.to_datetime(df["日付"], errors="coerce")
+        df = df.sort_values("日付", ascending=False)
+    except:
+        pass
+
+    return df.reset_index(drop=True), sheet, status_col
+
+# ====== UIと処理 ======
+def main():
+    if st.session_state.get("role") != "admin":
+        st.warning("このページは管理者専用です。ログインしてください。")
+        st.stop()
+
+    st.title("日報承認ページ")
+    selected_date = st.date_input("表示する日付でフィルター（省略可）", value=None)
+
+    df, sheet, status_col = load_pending_approvals(SPREADSHEET_KEY, SHEET_NAME)
+
+    if selected_date:
+        df = df[df["日付"] == pd.to_datetime(selected_date)]
+
+    if df.empty:
+        st.info("未承認の日報はありません。")
+        return
+
+    # チェックフラグ初期化（ユニークキーで）
+    flag_keys = [f"chk_{df.loc[i, '案件番号']}_{i}" for i in range(len(df))]
+
+    st.subheader("承認待ち一覧")
+
+    for i, row in df.iterrows():
+        key = flag_keys[i]
+        cols = st.columns([0.05, 0.95])
+        checked = cols[0].checkbox("", key=key)
+        cols[1].markdown(
+            f"**予約番号:** {row['案件番号']}｜**日付:** {row['日付'].strftime('%Y/%m/%d')}｜"
+            f"**名前:** {row['名前']}｜**報告:** {row['報告内容']}"
+        )
+        df.at[i, "チェック状態"] = checked
+
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("✅ 承認する"):
+            for i in df[df["チェック状態"] == True].index:
+                row_num = df.at[i, "行番号"]
+                sheet.update_cell(int(row_num), 20, "承認")
+            st.success("承認が完了しました。")
+            st.rerun()
+
+    with col2:
+        if st.button("❌ 却下する"):
+            for i in df[df["チェック状態"] == True].index:
+                row_num = df.at[i, "行番号"]
+                sheet.update_cell(int(row_num), 20, "却下")
+            st.warning("却下が完了しました。")
+            st.rerun()
+
+if __name__ == "__main__":
+    main()
+
 # import streamlit as st
 # import gspread
 # import pandas as pd
@@ -134,116 +233,116 @@
 #         st.rerun()  # ✅ 同様に再読み込み
 
 
-import streamlit as st
-import gspread
-import pandas as pd
-from google.oauth2.service_account import Credentials
-from datetime import datetime
+# import streamlit as st
+# import gspread
+# import pandas as pd
+# from google.oauth2.service_account import Credentials
+# from datetime import datetime
 
-# ====== 認証とクライアント取得 ======
-SCOPES = [
-    "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive"
-]
+# # ====== 認証とクライアント取得 ======
+# SCOPES = [
+#     "https://www.googleapis.com/auth/spreadsheets",
+#     "https://www.googleapis.com/auth/drive"
+# ]
 
-SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
-SHEET_NAME = "予約一覧"
+# SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
+# SHEET_NAME = "予約一覧"
 
-@st.cache_resource
-def get_gspread_client():
-    credentials = Credentials.from_service_account_info(
-        st.secrets["gcp_service_account"], scopes=SCOPES
-    )
-    return gspread.authorize(credentials)
+# @st.cache_resource
+# def get_gspread_client():
+#     credentials = Credentials.from_service_account_info(
+#         st.secrets["gcp_service_account"], scopes=SCOPES
+#     )
+#     return gspread.authorize(credentials)
 
 
-# ====== データ取得関数 ======
-def load_pending_approvals(spreadsheet_key, sheet_name):
-    client = get_gspread_client()
-    sheet = client.open_by_key(spreadsheet_key).worksheet(sheet_name)
-    data = sheet.get_all_values()
+# # ====== データ取得関数 ======
+# def load_pending_approvals(spreadsheet_key, sheet_name):
+#     client = get_gspread_client()
+#     sheet = client.open_by_key(spreadsheet_key).worksheet(sheet_name)
+#     data = sheet.get_all_values()
 
-    headers = data[2]  # 3行目がヘッダー
-    records = data[3:]  # 4行目以降がデータ
+#     headers = data[2]  # 3行目がヘッダー
+#     records = data[3:]  # 4行目以降がデータ
 
-    df = pd.DataFrame(records, columns=headers)
-    df["行番号"] = range(4, 4 + len(df))  # 実際のスプレッドシートの行番号を記録
+#     df = pd.DataFrame(records, columns=headers)
+#     df["行番号"] = range(4, 4 + len(df))  # 実際のスプレッドシートの行番号を記録
 
 
     
-    # # T列が承認済みでないもののみフィルター（列名を確認して正確に）
-    status_col = df.columns[19]  # T列の列名を取得
-    df = df[df[status_col].fillna("") != "承認"]  # NaNでも落ちないように
+#     # # T列が承認済みでないもののみフィルター（列名を確認して正確に）
+#     status_col = df.columns[19]  # T列の列名を取得
+#     df = df[df[status_col].fillna("") != "承認"]  # NaNでも落ちないように
 
-    # 日付列で並び替え（B列 = 日付）
-    try:
-        df["日付"] = pd.to_datetime(df["日付"])
-        df = df.sort_values("日付", ascending=False)
-    except:
-        pass
+#     # 日付列で並び替え（B列 = 日付）
+#     try:
+#         df["日付"] = pd.to_datetime(df["日付"])
+#         df = df.sort_values("日付", ascending=False)
+#     except:
+#         pass
 
-    return df, sheet, status_col
+#     return df, sheet, status_col
 
-# ====== UIと処理 ======
-def main():
-    if st.session_state.get("role") != "admin":
-        st.warning("このページは管理者専用です。ログインしてください。")
-        st.stop()
+# # ====== UIと処理 ======
+# def main():
+#     if st.session_state.get("role") != "admin":
+#         st.warning("このページは管理者専用です。ログインしてください。")
+#         st.stop()
 
-    st.title("日報承認ページ")
-    SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
-    SHEET_NAME = "予約一覧"
+#     st.title("日報承認ページ")
+#     SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
+#     SHEET_NAME = "予約一覧"
 
-    # 日付フィルター（オプション）
-    selected_date = st.date_input("表示する日付でフィルター（省略可）")
+#     # 日付フィルター（オプション）
+#     selected_date = st.date_input("表示する日付でフィルター（省略可）")
 
-    df, sheet, status_col = load_pending_approvals(SPREADSHEET_KEY, SHEET_NAME)
+#     df, sheet, status_col = load_pending_approvals(SPREADSHEET_KEY, SHEET_NAME)
 
-    if selected_date:
-        df = df[df["日付"] == pd.to_datetime(selected_date)]
+#     if selected_date:
+#         df = df[df["日付"] == pd.to_datetime(selected_date)]
 
-    if df.empty:
-        st.info("未承認の日報はありません。")
-        return
+#     if df.empty:
+#         st.info("未承認の日報はありません。")
+#         return
 
 
-# フラグの初期化
-    if "approval_flags" not in st.session_state or len(st.session_state.approval_flags) != len(df):
-        st.session_state.approval_flags = [False] * len(df)
+# # フラグの初期化
+#     if "approval_flags" not in st.session_state or len(st.session_state.approval_flags) != len(df):
+#         st.session_state.approval_flags = [False] * len(df)
     
-    st.subheader("承認待ち一覧")
+#     st.subheader("承認待ち一覧")
 
 
 
-    for i, row in df.reset_index(drop=True).iterrows():
-        unique_key = f"chk_{row['案件番号']}_{i}"
-        cols = st.columns([0.05, 0.95])
-        st.session_state.approval_flags[i] = cols[0].checkbox("", key=unique_key)
-        cols[1].markdown(
-            f"**予約番号:** {row['案件番号']}｜**日付:** {row['日付'].strftime('%Y/%m/%d')}｜"
-            f"**名前:** {row['名前']}｜**報告:** {row['報告内容']}"
-        )
+#     for i, row in df.reset_index(drop=True).iterrows():
+#         unique_key = f"chk_{row['案件番号']}_{i}"
+#         cols = st.columns([0.05, 0.95])
+#         st.session_state.approval_flags[i] = cols[0].checkbox("", key=unique_key)
+#         cols[1].markdown(
+#             f"**予約番号:** {row['案件番号']}｜**日付:** {row['日付'].strftime('%Y/%m/%d')}｜"
+#             f"**名前:** {row['名前']}｜**報告:** {row['報告内容']}"
+#         )
 
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("✅ 承認する"):
-            for i, flag in enumerate(st.session_state.approval_flags):
-                if flag:
-                    row_num = df.iloc[i]["行番号"]
-                    sheet.update_cell(int(row_num), 20, "承認")  # T列 = index 19 + 1
-            st.success("承認が完了しました。")
-            st.rerun()
+#     col1, col2 = st.columns(2)
+#     with col1:
+#         if st.button("✅ 承認する"):
+#             for i, flag in enumerate(st.session_state.approval_flags):
+#                 if flag:
+#                     row_num = df.iloc[i]["行番号"]
+#                     sheet.update_cell(int(row_num), 20, "承認")  # T列 = index 19 + 1
+#             st.success("承認が完了しました。")
+#             st.rerun()
 
-    with col2:
-        if st.button("❌ 却下する"):
-            for i, flag in enumerate(st.session_state.approval_flags):
-                if flag:
-                    row_num = df.iloc[i]["行番号"]
-                    sheet.update_cell(int(row_num), 20, "却下")
-            st.warning("却下が完了しました。")
-            st.rerun()
+#     with col2:
+#         if st.button("❌ 却下する"):
+#             for i, flag in enumerate(st.session_state.approval_flags):
+#                 if flag:
+#                     row_num = df.iloc[i]["行番号"]
+#                     sheet.update_cell(int(row_num), 20, "却下")
+#             st.warning("却下が完了しました。")
+#             st.rerun()
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
 
 
