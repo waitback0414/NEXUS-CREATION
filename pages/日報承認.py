@@ -11,7 +11,7 @@ if st.session_state.get("role") != "admin":
 
 # 認証設定
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
-SPREADSHEET_KEY = "あなたのスプレッドシートID"
+SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
 SHEET_NAME = "予約一覧"
 
 @st.cache_resource
