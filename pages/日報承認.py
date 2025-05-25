@@ -44,7 +44,7 @@ def fetch_pending_reports():
     df_filtered = pd.DataFrame(filtered, columns=headers).iloc[:, column_indices]
 
     # 日付ソート（登録日列が18列目→index=17）
-    df_filtered["報告済み"] = pd.to_datetime(df_filtered["登録日"], errors='coerce')
+    df_filtered["登録日"] = pd.to_datetime(df_filtered["登録日"], errors='coerce')
     df_filtered = df_filtered.sort_values(by="登録日", ascending=False).reset_index(drop=True)
 
     return df_filtered, sheet
