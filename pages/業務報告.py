@@ -160,7 +160,7 @@ else:
                             report_sheet.append_row([
                                 timestamp,
                                 user_email,
-                                row[col_indices["A"]],
+                                int(row[col_indices["A"]]),  # ← 数値として入力される
                                 golf_course,
                                 work_type,
                                 status,
