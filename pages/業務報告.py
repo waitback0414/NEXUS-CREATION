@@ -60,6 +60,7 @@ for i, row in enumerate(records):  # ← records はシートの3行目から
         if is_user and (is_k_empty or is_t_rejected):
             filtered_records.append({"row": row, "row_number": row_number})
 
+
 st.write(f"いつもご苦労様です、{st.session_state['username']} さん！")
 # st.write(st.session_state)>>>バグ出し用。これはめっちゃ使える！
 st.title("業務報告")
@@ -68,10 +69,11 @@ if not filtered_records:
     st.info("未報告の予約はありません。")
 else:
     for idx, item in enumerate(filtered_records):
-    row = item["row"]
-    row_number = item["row_number"]  # ← これが予約一覧シートの正確な行番号
+        row = item["row"]
+        row_number = item["row_number"]  # ← これが予約一覧シートの正確な行番号
 
-            # 構造化して予約情報を表示
+        # ここから表示やフォームの処理を記述します
+        with st.expander(f"案件 {idx + 1}"):
             st.markdown(f"""
             <div style='
                 border: 1px solid #ccc; 
@@ -88,12 +90,12 @@ else:
             </div>
             """, unsafe_allow_html=True)
 
-            # ★却下メッセージを表示
             if row[col_indices["T"]].strip() == "却下":
                 st.warning("却下されたので修正してください。")
                 comment = row[col_indices["AJ"]].strip()
                 if comment:
                     st.info(f"却下コメント：{comment}")
+
 
             # 各予約に一意なキー
             key_suffix = f"{idx}"
