@@ -44,7 +44,8 @@ col_indices = {
     "E": 4,
     "G": 6,
     "K": 10,
-    "T": 19
+    "T": 19,
+    "AJ": 35
 }
 
 # --- ここで filtered_records を定義 ---
@@ -87,6 +88,9 @@ else:
             # ★却下メッセージを表示
             if row[col_indices["T"]].strip() == "却下":
                 st.warning("却下されたので修正してください。")
+                comment = row[col_indices["AJ"]].strip()
+                if comment:
+                    st.info(f"却下コメント：{comment}")
 
             # 各予約に一意なキー
             key_suffix = f"{idx}"
@@ -137,8 +141,15 @@ else:
                         ], value_input_option="USER_ENTERED")
 
                         # K列に「報告済み」フラグ（任意）
-                        row_number = idx + 3  # データは3行目から
-                        sheet.update_cell(row_number, col_indices["K"] + 1, "報告済み")
+                        # 報告元の行番号（元データが3行目から始まるため +3）
+                        row_number = idx + 3
+                        
+                        # 「却下」されていたらT列を空欄に戻す
+                        if row[col_indices["T"]].strip() == "却下":
+                            sheet.update_cell(row_number, col_indices["T"] + 1, "")  # T列 = index 19 + 1 = 列番号20
+                        else:
+                            sheet.update_cell(row_number, col_indices["K"] + 1, "報告済み")  # 通常はK列に「報告済み」
+
 
                         st.success("日報が登録されました ✅")
                         time.sleep(1)
