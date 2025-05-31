@@ -85,7 +85,7 @@ def main():
         date_str = row["登録日"].strftime("%Y/%m/%d") if pd.notnull(row["登録日"]) else "未登録"
         cols[1].markdown(
             f"**ID:** {row['ID']}｜**登録日:** {date_str}｜"
-            f"**報告者:** {row['報告者']}｜**ゴルフ場:** {row['ゴルフ場']}｜**報告:** {row['報告']}**自動チェック:** {row['チェック']}"
+            f"**報告者:** {row['報告者']}｜**ゴルフ場:** {row['ゴルフ場']}｜**報告:** {row['報告']}|**自動チェック:** {row['チェック']}"
         )
         st.session_state.reject_comments[i] = cols[2].text_input(
             "却下コメント", value=st.session_state.reject_comments[i], key=f"comment_{unique_key}"
