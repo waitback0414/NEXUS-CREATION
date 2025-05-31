@@ -147,8 +147,8 @@ else:
                         # 「却下」されていたらT列を空欄に戻す
                         if row[col_indices["T"]].strip() == "却下":
                             sheet.update_cell(row_number, col_indices["T"] + 1, "")  # T列 = index 19 + 1 = 列番号20
-                        else:
-                            sheet.update_cell(row_number, col_indices["K"] + 1, "報告済み")  # 通常はK列に「報告済み」
+                        # else:
+                        #     sheet.update_cell(row_number, col_indices["K"] + 1, "報告済み")  # 通常はK列に「報告済み」
 
 
                         st.success("日報が登録されました ✅")
