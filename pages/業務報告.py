@@ -44,16 +44,20 @@ col_indices = {
     "E": 4,
     "G": 6,
     "K": 10
+    "T": 19
 }
 
 # --- ここで filtered_records を定義 ---
+# --- フィルタ条件の修正 ---
 filtered_records = [
     row for row in records
-    if len(row) > max(col_indices.values()) and
-       row[col_indices["G"]] == username and
-       row[col_indices["K"]] == ""
+    if len(row) > max(col_indices.values())
+    and row[col_indices["G"]] == username
+    and (
+        row[col_indices["K"]] == "" or
+        row[col_indices["T"]].strip() == "却下"
+    )
 ]
-
 st.write(f"いつもご苦労様です、{st.session_state['username']} さん！")
 # st.write(st.session_state)>>>バグ出し用。これはめっちゃ使える！
 st.title("業務報告")
@@ -78,6 +82,9 @@ else:
             <p><strong>作業内容:</strong> {row[col_indices["E"]]}</p>
             </div>
             """, unsafe_allow_html=True)
+            # ★却下メッセージを表示
+            if row[col_indices["T"]].strip() == "却下":
+                st.warning("却下されたので修正してください。")
 
             # 各予約に一意なキー
             key_suffix = f"{idx}"
