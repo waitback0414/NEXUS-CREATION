@@ -50,15 +50,16 @@ col_indices = {
 
 # --- ここで filtered_records を定義 ---
 # --- フィルタ条件の修正 ---
-filtered_records = [
-    row for row in records
-    if len(row) > max(col_indices.values())
-    and row[col_indices["G"]] == username
-    and (
-        row[col_indices["K"]] == "" or
-        row[col_indices["T"]].strip() == "却下"
-    )
-]
+filtered_records = []
+for i, row in enumerate(records):  # ← records はシートの3行目から
+    row_number = i + 3  # 実際のスプレッドシート上の行番号（1-based）
+    if len(row) > max(col_indices.values()):
+        is_user = row[col_indices["G"]] == username
+        is_k_empty = row[col_indices["K"]] == ""
+        is_t_rejected = row[col_indices["T"]].strip() == "却下"
+        if is_user and (is_k_empty or is_t_rejected):
+            filtered_records.append({"row": row, "row_number": row_number})
+
 st.write(f"いつもご苦労様です、{st.session_state['username']} さん！")
 # st.write(st.session_state)>>>バグ出し用。これはめっちゃ使える！
 st.title("業務報告")
@@ -66,8 +67,10 @@ st.title("業務報告")
 if not filtered_records:
     st.info("未報告の予約はありません。")
 else:
-    for idx, row in enumerate(filtered_records):
-        with st.expander(f"案件 {idx + 1}"):
+    for idx, item in enumerate(filtered_records):
+        row = item["row"]
+        row_number = item["row_number"]  # ← これが予約一覧シートの正確な行番号
+
             # 構造化して予約情報を表示
             st.markdown(f"""
             <div style='
@@ -165,8 +168,9 @@ else:
                             ], value_input_option="USER_ENTERED")
                     
                         # T列を空欄に戻す（再承認待ち）
-                        row_number = idx + 3
+                        # T列（承認）のクリア → 確実に元行を対象に
                         sheet.update_cell(row_number, col_indices["T"] + 1, "")
+
                     
                         st.success("日報が登録されました ✅")
                         time.sleep(1)
