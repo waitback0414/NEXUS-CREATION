@@ -75,6 +75,7 @@ else:
                 padding: 10px;
                 background-color: #f9f9f9;
                 margin-bottom: 10px;
+                color: black;
             '>
             <p><strong>案件番号:</strong> {row[col_indices["A"]]}</p>
             <p><strong>日付:</strong> {row[col_indices["B"]]}</p>
@@ -82,6 +83,7 @@ else:
             <p><strong>作業内容:</strong> {row[col_indices["E"]]}</p>
             </div>
             """, unsafe_allow_html=True)
+
             # ★却下メッセージを表示
             if row[col_indices["T"]].strip() == "却下":
                 st.warning("却下されたので修正してください。")
