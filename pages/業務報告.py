@@ -128,32 +128,80 @@ else:
 
                     if submitted:
                         report_sheet = client.open_by_key(SPREADSHEET_KEY).worksheet("日報回答")
-                        report_sheet.append_row([
-                            timestamp,                            # A: タイムスタンプ
-                            user_email,                           # B: メールアドレス
-                            row[col_indices["A"]],                # C: 案件番号
-                            golf_course,                          # D: ゴルフ場
-                            work_type,                            # E: 実績業務
-                            status,                               # F: ステータス
-                            round_count,                          # G: ラウンド数
-                            "", "",                               # H, I: 空欄
-                            remarks                               # J: 報告事項
-                        ], value_input_option="USER_ENTERED")
-
-                        # K列に「報告済み」フラグ（任意）
-                        # 報告元の行番号（元データが3行目から始まるため +3）
+                        report_data = report_sheet.get_all_values()
+                    
+                        # 案件番号で該当行を探す（C列）
+                        target_row_index = None
+                        for i, r in enumerate(report_data[1:], start=2):
+                            if r[2] == row[col_indices["A"]]:
+                                target_row_index = i
+                                break
+                    
+                        if target_row_index:
+                            # 修正：上書きする
+                            report_sheet.update(f"A{target_row_index}:J{target_row_index}", [[
+                                timestamp,
+                                user_email,
+                                row[col_indices["A"]],
+                                golf_course,
+                                work_type,
+                                status,
+                                round_count,
+                                "", "",
+                                remarks
+                            ]])
+                        else:
+                            # 新規：追加する
+                            report_sheet.append_row([
+                                timestamp,
+                                user_email,
+                                row[col_indices["A"]],
+                                golf_course,
+                                work_type,
+                                status,
+                                round_count,
+                                "", "",
+                                remarks
+                            ], value_input_option="USER_ENTERED")
+                    
+                        # T列を空欄に戻す（再承認待ち）
                         row_number = idx + 3
-                        
-                        # 「却下」されていたらT列を空欄に戻す
-                        if row[col_indices["T"]].strip() == "却下":
-                            sheet.update_cell(row_number, col_indices["T"] + 1, "")  # T列 = index 19 + 1 = 列番号20
-                        # else:
-                        #     sheet.update_cell(row_number, col_indices["K"] + 1, "報告済み")  # 通常はK列に「報告済み」
-
-
+                        sheet.update_cell(row_number, col_indices["T"] + 1, "")
+                    
                         st.success("日報が登録されました ✅")
                         time.sleep(1)
                         st.session_state[f"show_text_{key_suffix}"] = False
                         st.rerun()
+
+
+                    # if submitted:
+                    #     report_sheet = client.open_by_key(SPREADSHEET_KEY).worksheet("日報回答")
+                    #     report_sheet.append_row([
+                    #         timestamp,                            # A: タイムスタンプ
+                    #         user_email,                           # B: メールアドレス
+                    #         row[col_indices["A"]],                # C: 案件番号
+                    #         golf_course,                          # D: ゴルフ場
+                    #         work_type,                            # E: 実績業務
+                    #         status,                               # F: ステータス
+                    #         round_count,                          # G: ラウンド数
+                    #         "", "",                               # H, I: 空欄
+                    #         remarks                               # J: 報告事項
+                    #     ], value_input_option="USER_ENTERED")
+
+                    #     # K列に「報告済み」フラグ（任意）
+                    #     # 報告元の行番号（元データが3行目から始まるため +3）
+                    #     row_number = idx + 3
+                        
+                    #     # 「却下」されていたらT列を空欄に戻す
+                    #     if row[col_indices["T"]].strip() == "却下":
+                    #         sheet.update_cell(row_number, col_indices["T"] + 1, "")  # T列 = index 19 + 1 = 列番号20
+                    #     # else:
+                    #     #     sheet.update_cell(row_number, col_indices["K"] + 1, "報告済み")  # 通常はK列に「報告済み」
+
+
+                    #     st.success("日報が登録されました ✅")
+                    #     time.sleep(1)
+                    #     st.session_state[f"show_text_{key_suffix}"] = False
+                    #     st.rerun()
 
 
