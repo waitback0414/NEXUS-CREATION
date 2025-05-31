@@ -68,8 +68,8 @@ if not filtered_records:
     st.info("未報告の予約はありません。")
 else:
     for idx, item in enumerate(filtered_records):
-        row = item["row"]
-        row_number = item["row_number"]  # ← これが予約一覧シートの正確な行番号
+    row = item["row"]
+    row_number = item["row_number"]  # ← これが予約一覧シートの正確な行番号
 
             # 構造化して予約情報を表示
             st.markdown(f"""
