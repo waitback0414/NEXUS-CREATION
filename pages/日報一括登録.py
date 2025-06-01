@@ -29,6 +29,11 @@ def main():
     st.title("📝 案件一括登録")
 
 
+# ===== 呼び出し =====
+if __name__ == "__main__":
+    main()
+
+
 # シートからB列3行目以降を取得する関数
 def get_list(sheet_name):
     sheet = client.open_by_key(SPREADSHEET_KEY).worksheet(sheet_name)
