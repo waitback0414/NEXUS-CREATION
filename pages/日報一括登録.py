@@ -58,15 +58,19 @@ for i, name in enumerate(employees):
     golf = cols[2].selectbox("ゴルフ場", golf_courses, key=f"golf_{i}")
     input_data.append((name, work, golf))
 
-# 登録処理（.updateで一括）
 if st.button("一括登録"):
     try:
         sheet = client.open_by_key(SPREADSHEET_KEY).worksheet("案件登録")
         last_row = len(sheet.get_all_values())
 
+        # ★ 1回だけIDを取得
+        base_id = generate_new_id(SPREADSHEET_KEY, "案件登録")
+        base_id_int = int(base_id)
+
+        # 一括登録データを構築
         new_rows = []
-        for name, work, golf in input_data:
-            new_id = generate_new_id(SPREADSHEET_KEY, "案件登録")
+        for i, (name, work, golf) in enumerate(input_data):
+            new_id = str(base_id_int + i)
             new_rows.append([
                 new_id,
                 selected_date.strftime("%Y/%m/%d"),
@@ -82,3 +86,4 @@ if st.button("一括登録"):
     except Exception as e:
         st.error("登録中にエラーが発生しました。")
         st.exception(e)
+
