@@ -3,10 +3,10 @@ import gspread
 from google.oauth2.service_account import Credentials
 from datetime import date, datetime
 
-# 認証スコープ
+# --- 認証スコープ ---
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
-# 認証とクライアント取得
+# --- gspread クライアント取得（キャッシュ可） ---
 @st.cache_resource
 def get_gspread_client():
     credentials = Credentials.from_service_account_info(
@@ -17,16 +17,28 @@ def get_gspread_client():
 
 client = get_gspread_client()
 
-# スプレッドシートキー
-SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"  # ←差し替えてください
+# --- スプレッドシートキーを設定（自分のに差し替えてください） ---
+SPREADSHEET_KEY = "あなたのスプレッドシートキー"
 
-# マスターリスト取得（B列3行目以降）
-def get_list(sheet_name):
-    sheet = client.open_by_key(SPREADSHEET_KEY).worksheet(sheet_name)
-    values = sheet.col_values(2)[2:]
-    return [v for v in values if v.strip() != ""]
+# --- マスター情報を一括取得（キャッシュされる） ---
+@st.cache_data
+def get_master_lists():
+    client = get_gspread_client()
+    sheet_emp = client.open_by_key(SPREADSHEET_KEY).worksheet("従業員一覧")
+    sheet_golf = client.open_by_key(SPREADSHEET_KEY).worksheet("ゴルフ場一覧")
+    sheet_work = client.open_by_key(SPREADSHEET_KEY).worksheet("作業一覧")
 
-# 年度ごとのIDを生成（例: "250001"）
+    employees = sheet_emp.col_values(2)[2:]  # B列3行目以降
+    golf_courses = sheet_golf.col_values(2)[2:]
+    work_types = sheet_work.col_values(2)[2:]
+
+    return (
+        [e for e in employees if e.strip()],
+        [g for g in golf_courses if g.strip()],
+        [w for w in work_types if w.strip()]
+    )
+
+# --- ID発番関数（年度ごとの連番） ---
 def generate_new_id(spreadsheet_key, sheet_name):
     sheet = client.open_by_key(spreadsheet_key).worksheet(sheet_name)
     data = sheet.col_values(1)[2:]  # A列3行目以降
@@ -36,7 +48,7 @@ def generate_new_id(spreadsheet_key, sheet_name):
         return f"{year_prefix}0001"
     return str(max(year_ids) + 1)
 
-# === アプリ本体 ===
+# --- アプリ本体 ---
 def main():
     if st.session_state.get("role") != "admin":
         st.error("このページは管理者専用です。")
@@ -44,12 +56,10 @@ def main():
 
     st.title("📝 案件一括登録")
 
-    # マスター取得
-    employees = get_list("従業員一覧")
-    golf_courses = get_list("ゴルフ場一覧")
-    work_types = get_list("作業一覧")
+    # --- マスター取得（1回だけ） ---
+    employees, golf_courses, work_types = get_master_lists()
 
-    # カレンダーで日付指定
+    # --- カレンダーで日付指定 ---
     selected_date = st.date_input("登録日を選択してください", value=date.today())
 
     st.write("### ✅ 対象者を選択してください")
@@ -68,13 +78,13 @@ def main():
             "golf": golf
         })
 
-    # 登録ボタン
+    # --- 登録ボタン処理 ---
     if st.button("一括登録"):
         try:
             sheet = client.open_by_key(SPREADSHEET_KEY).worksheet("案件登録")
             last_row = len(sheet.get_all_values())
 
-            # IDベース：1回だけ取得
+            # IDは1回だけ取得して加算方式で生成
             base_id = generate_new_id(SPREADSHEET_KEY, "案件登録")
             base_id_int = int(base_id)
 
@@ -103,6 +113,6 @@ def main():
             st.error("登録中にエラーが発生しました。")
             st.exception(e)
 
-# 実行
+# --- 実行 ---
 if __name__ == "__main__":
     main()
