@@ -91,13 +91,25 @@ def main():
         cols = st.columns([0.05, 0.7, 0.25])
         st.session_state.approval_flags[i] = cols[0].checkbox("", key=f"chk_{unique_key}")
         date_str = row["登録日"].strftime("%Y/%m/%d") if pd.notnull(row["登録日"]) else "未登録"
+
+        # エラービットの解釈（4桁2進数）
+        error_flags = row.get("エラー", "0000").zfill(4)
+        error_labels = ["日付", "名前", "業務", "ゴルフ場"]
+        error_messages = [
+            label + "エラー" for bit, label in zip(error_flags, error_labels) if bit == "1"
+        ]
+        error_str = "｜**エラー:** " + "・".join(error_messages) if error_messages else ""
+
         cols[1].markdown(
             f"**ID:** {row['ID']}｜**登録日:** {date_str}｜"
-            f"**報告者:** {row['報告者']}｜**ゴルフ場:** {row['ゴルフ場']}｜**報告:** {row['報告']}|**自動チェック:** {row['チェック']}"
+            f"**報告者:** {row['報告者']}｜**ゴルフ場:** {row['ゴルフ場']}｜"
+            f"**報告:** {row['報告']}｜**自動チェック:** {row['チェック']}{error_str}"
         )
+
         st.session_state.reject_comments[i] = cols[2].text_input(
             "却下コメント", value=st.session_state.reject_comments[i], key=f"comment_{unique_key}"
         )
+
 
     # ===== ボタン処理 =====
     col1, col2 = st.columns(2)
