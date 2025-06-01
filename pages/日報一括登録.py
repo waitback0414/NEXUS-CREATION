@@ -74,9 +74,9 @@ if st.button("一括登録"):
             new_rows.append([
                 new_id,
                 selected_date.strftime("%Y/%m/%d"),
-                name,
+                golf,
                 work,
-                golf
+                name
             ])
 
         insert_range = f"A{last_row+1}:E{last_row+len(new_rows)}"
