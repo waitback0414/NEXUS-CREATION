@@ -26,7 +26,8 @@ def fetch_pending_reports():
     data = sheet.get_all_values()
 
     if len(data) < 4:
-        return pd.DataFrame(), None
+    return pd.DataFrame(), sheet
+
 
     headers = data[2]
     records = data[3:]
