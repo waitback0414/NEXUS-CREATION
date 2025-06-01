@@ -97,9 +97,9 @@ def main():
                     new_rows.append([
                         new_id,
                         selected_date.strftime("%Y/%m/%d"),
-                        item["name"],
+                        item["golf"],
                         item["work"],
-                        item["golf"]
+                        item["name"]
                     ])
 
             if not new_rows:
