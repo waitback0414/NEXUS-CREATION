@@ -20,6 +20,15 @@ client = get_gspread_client()
 # スプレッドシートキー（あなたのスプレッドシートIDに変更してください）
 SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
 
+# ===== アプリ本体 =====
+def main():
+    if st.session_state.get("role") != "admin":
+        st.error("このページは管理者専用です。")
+        st.stop()
+
+    st.title("📝 案件一括登録")
+
+
 # シートからB列3行目以降を取得する関数
 def get_list(sheet_name):
     sheet = client.open_by_key(SPREADSHEET_KEY).worksheet(sheet_name)
