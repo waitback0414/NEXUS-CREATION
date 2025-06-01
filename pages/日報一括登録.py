@@ -62,24 +62,25 @@ selected_date = st.date_input("登録日を選択してください", value=date
 # マトリックス入力
 input_data = []
 
-st.write("### ✅ 登録対象を選んでください")
+st.write("### ✅ 登録対象を選択してください")
 
 for i, name in enumerate(employees):
-    cols = st.columns([0.1, 0.25, 0.3, 0.35])
-    
-    checked = cols[0].checkbox("", key=f"check_{i}")
+    cols = st.columns([0.15, 0.25, 0.3, 0.3])  # ← 比率を調整（小さすぎないように）
+
+    # 🔸 チェックボックスにラベルをつけると表示されやすくなる（もしくは空白でスペース確保）
+    checked = cols[0].checkbox(" ", value=False, key=f"check_{i}")
     cols[1].markdown(f"**{name}**")
-    
+
     work = cols[2].selectbox("業務内容", work_types, key=f"work_{i}")
     golf = cols[3].selectbox("ゴルフ場", golf_courses, key=f"golf_{i}")
-    
-    # チェックされているものだけを対象とする
+
     input_data.append({
         "checked": checked,
         "name": name,
         "work": work,
         "golf": golf
     })
+
 
 
 if st.button("一括登録"):
