@@ -81,10 +81,10 @@ else:
 
             if st.session_state.get(f"show_form_{key_suffix}", False):
                 with st.form(f"form_{key_suffix}"):
-                    selected_date = st.date_input("報告日を選択", value=datetime.date.today(), key=f"date_{key_suffix}")
+                    selected_date = st.date_input("勤務日を選択", value=datetime.date.today(), key=f"date_{key_suffix}")
                     report_date = selected_date.strftime("%Y/%m/%d")
 
-                    golf_course = st.selectbox("本日のゴルフ場", [row[col_indices["D"]]], key=f"golf_{key_suffix}")
+                    golf_course = st.selectbox("勤務したゴルフ場", [row[col_indices["D"]]], key=f"golf_{key_suffix}")
                     work_type = st.selectbox("本日の実績業務", [
                         "キャディー", "作業", "キャディー_休祝日", "作業_休祝日",
                         "研修", "研修_休祝日", "その他", "有休", "公休"
