@@ -32,12 +32,20 @@ def fetch_pending_reports():
 
     df = pd.DataFrame(records, columns=headers)
     df["行番号"] = range(4, 4 + len(df))  # 実際のシート行番号
-
-    # 日付変換
     df["登録日"] = pd.to_datetime(df["登録日"], errors="coerce")
 
+    # ID を数値として扱うための変換
+    df["ID_num"] = pd.to_numeric(df["ID"], errors="coerce")
+
+    # 「承認」列が空であるもの、かつ「登録日」があるものに限定
     if "承認" in df.columns:
         df = df[~df["承認"].fillna("").isin(["承認", "却下"])]
+
+    df = df[pd.notnull(df["登録日"])]  # 登録日があるものに限定
+    df = df.sort_values(by="ID_num", ascending=False)  # IDで降順
+
+    return df, sheet
+
 
 
     return df, sheet
