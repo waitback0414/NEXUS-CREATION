@@ -62,41 +62,58 @@ st.title("📋 案件一括登録")
 selected_date = st.date_input("登録日を選択してください", value=date.today())
 
 # マトリックス入力
-st.write("### ⛳ 従業員別 案件入力")
-
 input_data = []
+
+st.write("### ✅ 登録対象を選んでください")
+
 for i, name in enumerate(employees):
-    cols = st.columns([0.3, 0.35, 0.35])
-    cols[0].markdown(f"**{name}**")
-    work = cols[1].selectbox("業務内容", work_types, key=f"work_{i}")
-    golf = cols[2].selectbox("ゴルフ場", golf_courses, key=f"golf_{i}")
-    input_data.append((name, work, golf))
+    cols = st.columns([0.1, 0.25, 0.3, 0.35])
+    
+    checked = cols[0].checkbox("", key=f"check_{i}")
+    cols[1].markdown(f"**{name}**")
+    
+    work = cols[2].selectbox("業務内容", work_types, key=f"work_{i}")
+    golf = cols[3].selectbox("ゴルフ場", golf_courses, key=f"golf_{i}")
+    
+    # チェックされているものだけを対象とする
+    input_data.append({
+        "checked": checked,
+        "name": name,
+        "work": work,
+        "golf": golf
+    })
+
 
 if st.button("一括登録"):
     try:
         sheet = client.open_by_key(SPREADSHEET_KEY).worksheet("案件登録")
         last_row = len(sheet.get_all_values())
 
-        # ★ 1回だけIDを取得
+        # IDベース1回取得
         base_id = generate_new_id(SPREADSHEET_KEY, "案件登録")
         base_id_int = int(base_id)
 
-        # 一括登録データを構築
         new_rows = []
-        for i, (name, work, golf) in enumerate(input_data):
-            new_id = str(base_id_int + i)
-            new_rows.append([
-                new_id,
-                selected_date.strftime("%Y/%m/%d"),
-                golf,
-                work,
-                name
-            ])
+        counter = 0
+        for item in input_data:
+            if item["checked"]:
+                new_id = str(base_id_int + counter)
+                counter += 1
+                new_rows.append([
+                    new_id,
+                    selected_date.strftime("%Y/%m/%d"),
+                    item["name"],
+                    item["work"],
+                    item["golf"]
+                ])
 
-        insert_range = f"A{last_row+1}:E{last_row+len(new_rows)}"
-        sheet.update(insert_range, new_rows, value_input_option="USER_ENTERED")
+        if not new_rows:
+            st.warning("登録対象が選択されていません。")
+        else:
+            insert_range = f"A{last_row+1}:E{last_row+len(new_rows)}"
+            sheet.update(insert_range, new_rows, value_input_option="USER_ENTERED")
+            st.success("一括登録が完了しました ✅")
 
-        st.success("一括登録が完了しました ✅")
     except Exception as e:
         st.error("登録中にエラーが発生しました。")
         st.exception(e)
