@@ -18,7 +18,7 @@ def get_gspread_client():
 client = get_gspread_client()
 
 # スプレッドシートキー（あなたのスプレッドシートIDに変更してください）
-SPREADSHEET_KEY = "あなたのスプレッドシートキー"
+SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
 
 # シートからB列3行目以降を取得する関数
 def get_list(sheet_name):
