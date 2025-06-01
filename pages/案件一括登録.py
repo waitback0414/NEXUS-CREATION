@@ -18,7 +18,7 @@ def get_gspread_client():
 client = get_gspread_client()
 
 # --- スプレッドシートキーを設定（自分のに差し替えてください） ---
-SPREADSHEET_KEY = "あなたのスプレッドシートキー"
+SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
 
 # --- マスター情報を一括取得（キャッシュされる） ---
 @st.cache_data
