@@ -55,8 +55,6 @@ employees = get_list("従業員一覧")
 golf_courses = get_list("ゴルフ場一覧")
 work_types = get_list("作業一覧")
 
-# UI表示
-st.title("📋 案件一括登録")
 
 # カレンダー日付選択
 selected_date = st.date_input("登録日を選択してください", value=date.today())
