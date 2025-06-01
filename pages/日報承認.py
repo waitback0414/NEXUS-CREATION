@@ -94,7 +94,7 @@ def main():
 
         # エラービットの解釈（4桁2進数）
         error_flags = row.get("エラー", "0000").zfill(4)
-        error_labels = ["日付", "名前", "業務", "ゴルフ場"]
+        error_labels = ["ゴルフ場", "業務", "名前", "日付"]
         error_messages = [
             label + "エラー" for bit, label in zip(error_flags, error_labels) if bit == "1"
         ]
