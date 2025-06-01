@@ -26,7 +26,13 @@ def fetch_pending_reports():
     data = sheet.get_all_values()
 
     if len(data) < 4:
-        return pd.DataFrame(), sheet
+        return pd.DataFrame(), sheet  # ✅ ここは OK。ただし sheet が None でない前提
+    
+    # main内で防御的コードを追加
+    df, sheet = fetch_pending_reports()
+    if sheet is None:
+        st.error("シートを取得できませんでした。再読み込みしてください。")
+        st.stop()
 
 
     headers = data[2]
