@@ -90,7 +90,7 @@ def main():
     #             "work": work,
     #             "golf": golf
     #         })
-     input_data = []
+    input_data = []
     
     for i, name in enumerate(employees):
         with st.expander(f"👤 {name}", expanded=False):
