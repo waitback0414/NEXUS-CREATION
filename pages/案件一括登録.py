@@ -77,13 +77,26 @@ def main():
     #         "work": work,
     #         "golf": golf
     #     })
-    input_data = []
+    # input_data = []
+    # for i, name in enumerate(employees):
+    #     with st.expander(f"👤 {name}", expanded=False):
+    #         checked = st.checkbox("登録対象にする", key=f"check_{i}")
+    #         work = st.selectbox("業務内容を選択", work_types, key=f"work_{i}")
+    #         golf = st.selectbox("ゴルフ場を選択", golf_courses, key=f"golf_{i}")
+            
+    #         input_data.append({
+    #             "checked": checked,
+    #             "name": name,
+    #             "work": work,
+    #             "golf": golf
+    #         })
+        input_data = []
     for i, name in enumerate(employees):
         with st.expander(f"👤 {name}", expanded=False):
-            checked = st.checkbox("登録対象にする", key=f"check_{i}")
-            work = st.selectbox("業務内容を選択", work_types, key=f"work_{i}")
-            golf = st.selectbox("ゴルフ場を選択", golf_courses, key=f"golf_{i}")
-            
+            checked = st.checkbox("✅ この人を登録する", key=f"check_{i}")
+            work = st.selectbox("📋 業務内容", work_types, key=f"work_{i}")
+            golf = st.selectbox("⛳ ゴルフ場", golf_courses, key=f"golf_{i}")
+    
             input_data.append({
                 "checked": checked,
                 "name": name,
