@@ -64,19 +64,32 @@ def main():
 
     st.write("### ✅ 対象者を選択してください")
 
+    # input_data = []
+    # for i, name in enumerate(employees):
+    #     cols = st.columns([0.1, 0.25, 0.3, 0.35])
+    #     checked = cols[0].checkbox(" ", value=False, key=f"check_{i}")
+    #     cols[1].markdown(f"**{name}**")
+    #     work = cols[2].selectbox("業務内容", work_types, key=f"work_{i}")
+    #     golf = cols[3].selectbox("ゴルフ場", golf_courses, key=f"golf_{i}")
+    #     input_data.append({
+    #         "checked": checked,
+    #         "name": name,
+    #         "work": work,
+    #         "golf": golf
+    #     })
     input_data = []
     for i, name in enumerate(employees):
-        cols = st.columns([0.1, 0.25, 0.3, 0.35])
-        checked = cols[0].checkbox(" ", value=False, key=f"check_{i}")
-        cols[1].markdown(f"**{name}**")
-        work = cols[2].selectbox("業務内容", work_types, key=f"work_{i}")
-        golf = cols[3].selectbox("ゴルフ場", golf_courses, key=f"golf_{i}")
-        input_data.append({
-            "checked": checked,
-            "name": name,
-            "work": work,
-            "golf": golf
-        })
+        with st.expander(f"👤 {name}", expanded=False):
+            checked = st.checkbox("登録対象にする", key=f"check_{i}")
+            work = st.selectbox("業務内容を選択", work_types, key=f"work_{i}")
+            golf = st.selectbox("ゴルフ場を選択", golf_courses, key=f"golf_{i}")
+            
+            input_data.append({
+                "checked": checked,
+                "name": name,
+                "work": work,
+                "golf": golf
+            })
 
     # --- 登録ボタン処理 ---
     if st.button("一括登録"):
