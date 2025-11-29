@@ -2,7 +2,6 @@ import streamlit as st
 import gspread
 from google.oauth2.service_account import Credentials
 import datetime
-import pandas as pd
 
 # ページ設定（スマホ表示を意識して centered に）
 st.set_page_config(page_title="案件登録", layout="centered")
@@ -60,50 +59,46 @@ st.title("案件登録")
 # 認証スコープ
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive"
+    "https://www.googleapis.com/auth/drive",
 ]
 
 SPREADSHEET_KEY = "1tDCn0Io06H2DkDK8qgMBx3l4ff9E2w_uHl3O9xMnkYE"
 SHEET_NAME = "案件登録"
 
+
 @st.cache_resource
 def get_gspread_client():
     credentials = Credentials.from_service_account_info(
         st.secrets["gcp_service_account"],
-        scopes=SCOPES
+        scopes=SCOPES,
     )
     return gspread.authorize(credentials)
 
+
+@st.cache_data(ttl=300)
 def get_list_from_sheet(spreadsheet_key: str, sheet_name: str, column_index: int):
-    """指定シートの指定列（0始まり）からリストを取得"""
+    """
+    指定シートの指定列（0始まり）からリストを取得。
+    ttl=300 により、同じ引数で5分以内の再呼び出しはキャッシュから返る。
+    """
     client = get_gspread_client()
     sheet = client.open_by_key(spreadsheet_key).worksheet(sheet_name)
     data = sheet.get_all_values()
     if len(data) < 3:
         return []
     records = data[2:]  # 3行目以降がデータ
-    return [row[column_index] for row in records if len(row) > column_index and row[column_index] != ""]
+    return [
+        row[column_index]
+        for row in records
+        if len(row) > column_index and row[column_index] != ""
+    ]
 
-# 各マスタの取得
-golf_courses = get_list_from_sheet(SPREADSHEET_KEY, "ゴルフ場一覧", 1)  # B列
-tasks        = get_list_from_sheet(SPREADSHEET_KEY, "作業一覧",     1)  # B列
-employees    = get_list_from_sheet(SPREADSHEET_KEY, "従業員一覧",   1)  # B列
-
-def get_project_list(spreadsheet_key: str, sheet_name: str):
-    """案件一覧の取得（必要であれば利用）"""
-    client = get_gspread_client()
-    sheet = client.open_by_key(spreadsheet_key).worksheet(sheet_name)
-    data = sheet.get_all_values()
-    if len(data) < 3:
-        return [], []
-    headers = data[1]      # 2行目をヘッダー
-    records = data[2:]     # 3行目以降データ
-    # 案件番号（A列）で降順ソート
-    records.sort(key=lambda x: int(x[0]), reverse=True)
-    return headers, records
 
 def generate_new_id(spreadsheet_key: str, sheet_name: str) -> str:
-    """A列の最大値+1で新しい案件IDを生成"""
+    """
+    A列の最大値+1で新しい案件IDを生成。
+    呼び出しのたびにシートを1回だけ読み、A列3行目以降を対象にする。
+    """
     client = get_gspread_client()
     sheet = client.open_by_key(spreadsheet_key).worksheet(sheet_name)
     # A列の3行目以降
@@ -119,7 +114,11 @@ def generate_new_id(spreadsheet_key: str, sheet_name: str) -> str:
     new_id = last_id + 1
     return str(new_id)
 
-new_id = generate_new_id(SPREADSHEET_KEY, SHEET_NAME)
+
+# 各マスタの取得（キャッシュされる）
+golf_courses = get_list_from_sheet(SPREADSHEET_KEY, "ゴルフ場一覧", 1)  # B列
+tasks = get_list_from_sheet(SPREADSHEET_KEY, "作業一覧", 1)            # B列
+employees = get_list_from_sheet(SPREADSHEET_KEY, "従業員一覧", 1)      # B列
 
 # 日付選択の状態管理
 if "selected_date" not in st.session_state:
@@ -132,18 +131,26 @@ with col1:
         st.session_state.selected_date = datetime.date.today()
 with col2:
     if st.button("明日"):
-        st.session_state.selected_date = datetime.date.today() + datetime.timedelta(days=1)
+        st.session_state.selected_date = datetime.date.today() + datetime.timedelta(
+            days=1
+        )
 with col3:
     if st.button("明後日"):
-        st.session_state.selected_date = datetime.date.today() + datetime.timedelta(days=2)
+        st.session_state.selected_date = datetime.date.today() + datetime.timedelta(
+            days=2
+        )
 
 selected_date = st.session_state.selected_date
 st.write(f"選択された日付: {selected_date.strftime('%Y/%m/%d')}")
 
 # 案件登録フォーム
 with st.form("案件登録フォーム"):
-    st.write(f"新しいID: {new_id}")
-    date_input = st.date_input("日付を選択してください", value=st.session_state.selected_date)
+    # IDは登録時に採番するので、ここでは表示だけにしておく
+    st.write("新しいID: 登録時に自動採番されます")
+
+    date_input = st.date_input(
+        "日付を選択してください", value=st.session_state.selected_date
+    )
     golf_course = st.selectbox("ゴルフ場を選択してください", golf_courses)
     task = st.selectbox("作業内容を選択してください", tasks)
     employee = st.selectbox("名前を選択してください", employees)
@@ -151,22 +158,25 @@ with st.form("案件登録フォーム"):
     submitted = st.form_submit_button("登録")
 
     if submitted:
+        # ここでだけ ID を発行（＝無駄な read を減らす）
+        new_id = generate_new_id(SPREADSHEET_KEY, SHEET_NAME)
+
         client = get_gspread_client()
         sheet = client.open_by_key(SPREADSHEET_KEY).worksheet(SHEET_NAME)
 
-        # date_input は datetime.date オブジェクトとして返る
+        # date_input は datetime.date オブジェクト
         date_str = date_input.strftime("%Y/%m/%d")
 
         # データを追加
         sheet.append_row(
             [int(new_id), date_str, golf_course, task, employee],
-            value_input_option='USER_ENTERED'
+            value_input_option="USER_ENTERED",
         )
 
         # 次回の初期値として選択した日付を保持
         st.session_state.selected_date = date_input
 
-        st.success("案件が登録されました。")
+        st.success(f"案件 {new_id} が登録されました。")
 
 # import streamlit as st
 # import gspread
